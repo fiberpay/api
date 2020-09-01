@@ -84,16 +84,30 @@ Parametr | Opis
 ## Mass outbound transfers
 Usługa gdzie FiberPay może wykonać wiele przekazów pieniężnych w zamian za jedną opłatę (np. 100 przelewów na wybrane konta bankowe). Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany zostanie ono płacone, a także dostać informacje dot. statusu każdego ze zleconych przekazów pieniężnych.
 
+Aby skorzystać z usługi należy:
+- założyć zlecenie (POST /orders/massoutbound)
+- dodać poszczególne przekazy pieniężne (POST /orders/massoutbound/item)
+- zakończyć definicję zlecenia (PUT /orders/massoutbound/{code}/define)
+- opłacić utworzone zlecenie
 
 ### POST /orders/massoutbound
+Tworzy zlecenie 
 
 ### POST /orders/massoutbound/item
 
-### POST /orders/massoutbound/close
+### PUT /orders/massoutbound/{code}/define
 
 ### GET /orders/massoutbound/{code}
+Pobranie informacji o całym zleceniu
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
 
 ### GET /orders/massoutbound/item/{code}
+Pobranie informacji o poszczególnym przekazie pieniężnym
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
 
 
 
@@ -107,12 +121,23 @@ Usługa gdzie FiberPay może wykonać wiele przekazów pieniężnych w zamian za
 ### POST /orders/massinbound/close
 
 ### GET /orders/massinbound/{code}
+Pobranie informacji o całym zleceniu
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
 
 ### GET /orders/massinbound/item/{code}
+Pobranie informacji o pojedyńczej wpłacie
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
 
 ### DELETE /orders/massinbound/item/{code}
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
 
-## GET /settlements
+### GET /settlements
 
-## GET /settlements/{code}
+### GET /settlements/{code}
 
