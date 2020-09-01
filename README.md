@@ -118,7 +118,7 @@ Parametr | Opis
 
 ### POST /orders/massinbound/item
 
-### POST /orders/massinbound/close
+### PUT /orders/massinbound/{code}/define
 
 ### GET /orders/massinbound/{code}
 Pobranie informacji o całym zleceniu
