@@ -47,7 +47,7 @@ Informacje jak odkodować lub jakich bibliotek użyć do obsługi tokenu JWT są
 
 ## Direct transfer
 
-Usługa pojedyńczego przekazu pieniężnego na konkretne konto bankowe. Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany przekaz zostanie opłacony, a także gdy FiberPay wykonana już dany przekaz na wskazane konto.
+Usługa pojedynczego przekazu pieniężnego na konkretne konto bankowe. Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany przekaz zostanie opłacony, a także gdy FiberPay wykonana już dany przekaz na wskazane konto.
 
 ### POST /orders/directtransfer
 Utworzenie zlecenia. Parametry żądania:
@@ -127,7 +127,7 @@ Parametr | Opis
 **code** | (wymagane) kod zlecenia
 
 ### GET /orders/massinbound/item/{code}
-Pobranie informacji o pojedyńczej wpłacie
+Pobranie informacji o pojedynczej wpłacie
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
