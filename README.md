@@ -45,19 +45,6 @@ Informacje jak odkodować lub jakich bibliotek użyć do obsługi tokenu JWT są
 
 # Opis usług
 
-## Pobranie informacji o zleceniu
-Dla każdego zlecenia utworzonego w systemie FiberPay można popbrać jego szczegóły.
-
-### GET /orders/{code}
-Parametr | Opis
------------- | -------------
-**code** | (wymagane) kod zlecenia
-
-Przykładowa odpowiedź serwera
-```json
-{}
-```
-
 ## Direct transfer
 
 Usługa pojedyńczego przekazu pieniężnego na konkretne konto bankowe. Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany przekaz zostanie opłacony, a także gdy FiberPay wykonana już dany przekaz na wskazane konto.
@@ -75,7 +62,15 @@ Parametr | Opis
 **callbackUrl** | URL na który ma być wywołany callback
 **callbackParams** | opcjonalne parametry callbacka
 
+### GET /orders/directtransfer/{code}
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
 
+Przykładowa odpowiedź serwera
+```json
+{}
+```
 
 ### DELETE /orders/directtransfer/{code}
 Anulowanie wcześniej utworzonego zlecenia (możliwe tylko dla jeszcze nieopłaconych zleceń).
@@ -90,7 +85,34 @@ Parametr | Opis
 Usługa gdzie FiberPay może wykonać wiele przekazów pieniężnych w zamian za jedną opłatę (np. 100 przelewów na wybrane konta bankowe). Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany zostanie ono płacone, a także dostać informacje dot. statusu każdego ze zleconych przekazów pieniężnych.
 
 
+### POST /orders/massoutbound
+
+### POST /orders/massoutbound/item
+
+### POST /orders/massoutbound/close
+
+### GET /orders/massoutbound/{code}
+
+### GET /orders/massoutbound/item/{code}
+
+
+
 ## Mass inbound transfers
 
 
+### POST /orders/massinbound
+
+### POST /orders/massinbound/item
+
+### POST /orders/massinbound/close
+
+### GET /orders/massinbound/{code}
+
+### GET /orders/massinbound/item/{code}
+
+### DELETE /orders/massinbound/item/{code}
+
+## GET /settlements
+
+## GET /settlements/{code}
 
