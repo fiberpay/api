@@ -155,10 +155,12 @@ Przykładowa odpowiedź
 ```
 
 ### PUT /orders/split/{code}/define
+Kończy tworzenie orderu (zamyka definicję).
+
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
-Kończy tworzenie orderu (zamyka definicję).
+
 Przykładowa odpowiedź:
 ```json
 {
