@@ -49,7 +49,7 @@ Informacje jak odkodować lub jakich bibliotek użyć do obsługi tokenu JWT są
 
 Usługa pojedynczego przekazu pieniężnego na konkretne konto bankowe. Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany przekaz zostanie opłacony, a także gdy FiberPay wykonana już dany przekaz na wskazane konto.
 
-### POST /orders/directtransfer
+### POST /orders/direct
 Utworzenie zlecenia. Parametry żądania:
 Parametr | Opis
 ------------ | -------------
@@ -62,7 +62,7 @@ Parametr | Opis
 **callbackUrl** | URL na który ma być wywołany callback
 **callbackParams** | opcjonalne parametry callbacka
 
-### GET /orders/directtransfer/{code}
+### GET /orders/direct/{code}
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
@@ -72,7 +72,7 @@ Przykładowa odpowiedź serwera
 {}
 ```
 
-### DELETE /orders/directtransfer/{code}
+### DELETE /orders/direct/{code}
 Anulowanie wcześniej utworzonego zlecenia (możliwe tylko dla jeszcze nieopłaconych zleceń).
 Parametr | Opis
 ------------ | -------------
@@ -117,17 +117,17 @@ Przykładowa odpowiedź
 ```
 
 
-### POST /orders/massoutbound/item
+### POST /orders/split/item
 
-### PUT /orders/massoutbound/{code}/define
+### PUT /orders/split/{code}/define
 
-### GET /orders/massoutbound/{code}
+### GET /orders/split/{code}
 Pobranie informacji o całym zleceniu
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
 
-### GET /orders/massoutbound/item/{code}
+### GET /orders/split/item/{code}
 Pobranie informacji o poszczególnym przekazie pieniężnym
 Parametr | Opis
 ------------ | -------------
@@ -135,28 +135,26 @@ Parametr | Opis
 
 
 
-## Mass inbound transfers
+## FiberCollect
 
 
-### POST /orders/massinbound
+### POST /orders/collect
 
-### POST /orders/massinbound/item
+### POST /orders/collect/item
 
-### PUT /orders/massinbound/{code}/define
-
-### GET /orders/massinbound/{code}
+### GET /orders/collect/{code}
 Pobranie informacji o całym zleceniu
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
 
-### GET /orders/massinbound/item/{code}
+### GET /orders/collect/item/{code}
 Pobranie informacji o pojedynczej wpłacie
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
 
-### DELETE /orders/massinbound/item/{code}
+### DELETE /orders/collect/item/{code}
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
