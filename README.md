@@ -100,27 +100,88 @@ Parametr | Opis
 Przykładowa odpowiedź
 ```json
 {
-   "data":{
-      "code":"mju35wnebp6z",
-      "status":"open",
-      "type":"split",
-      "currency":"PLN",
-      "metadata":null,
-      "createdAt":"2020-09-10 02:00:59",
-      "updatedAt":"2020-09-10 02:00:59"
-   },
-   "links":{
-      "rel":"self",
-      "href":"https:\/\/apitest.fiberpay.pl\/1.0\/orders\/split\/mju35wnebp6z"
-   }
+  "data": {
+    "code": "mju35wnebp6z",
+    "status": "open",
+    "type": "split",
+    "currency": "PLN",
+    "metadata": null,
+    "createdAt": "2020-09-10 02:00:59",
+    "updatedAt": "2020-09-10 02:00:59"
+  },
+  "links": {
+    "rel": "self",
+    "href": "https:\/\/apitest.fiberpay.pl\/1.0\/orders\/split\/mju35wnebp6z"
+  }
 }
 ```
 
 
 ### POST /orders/split/item
+Tworzy pojedynczy przelew do wysłania w ramach całego zlecenia.
+
+Parametr | Opis
+------------ | -------------
+**amount** | (wymagane) kwota przelewu
+**currency** | (wymagane) waluta przelewu (aktualnie wspierane tylko PLN)
+**parentCode** | (wymagane) kod zlecenia nadrzędnego
+**toName** | (wymagane) nazwa odbiorcy
+**toIban** | (wymagane) IBAN odbiorcy
+**description** | (wymagane) tytuł przelewu
+
+Przykładowa odpowiedź
+```json
+{
+  "data": {
+    "code": "ezumcdag",
+    "description": "testowy przelew",
+    "status": "open",
+    "type": "splitItem",
+    "currency": "PLN",
+    "amount": "100",
+    "feeAmount": "1.50",
+    "toName": "Jan Kowalski",
+    "toIban": "PL109023980000000143071844",
+    "parentCode": "mju35wnebp6z",
+    "metadata": null,
+    "createdAt": "2020-09-10 02:08:25",
+    "updatedAt": "2020-09-10 02:08:25"
+  },
+  "links": {
+    "rel": "self",
+    "href": "https:\/\/apitest.fiberpay.pl\/1.0\/orders\/split\/item\/ezumcdag"
+  }
+}
+```
 
 ### PUT /orders/split/{code}/define
-
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
+Kończy tworzenie orderu (zamyka definicję).
+Przykładowa odpowiedź:
+```json
+{
+  "data": {
+    "code": "mju35wnebp6z",
+    "status": "defined",
+    "type": "split",
+    "currency": "PLN",
+    "metadata": null,
+    "createdAt": "2020-09-10 02:00:59",
+    "updatedAt": "2020-09-10 02:26:05",
+    "payment": {
+      "amount": "203.0000",
+      "iban": "PL123400003",
+      "description": "mju35wnebp6z"
+    }
+  },
+  "links": {
+    "rel": "self",
+    "href": "https:\/\/apitest.fiberpay.pl\/1.0\/orders\/split\/mju35wnebp6z"
+  }
+}
+```
 ### GET /orders/split/{code}
 Pobranie informacji o całym zleceniu
 Parametr | Opis
