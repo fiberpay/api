@@ -81,7 +81,7 @@ Parametr | Opis
 {}
 ```
 
-## Mass outbound transfers
+## FiberSplit
 Usługa gdzie FiberPay może wykonać wiele przekazów pieniężnych w zamian za jedną opłatę (np. 100 przelewów na wybrane konta bankowe). Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany zostanie ono płacone, a także dostać informacje dot. statusu każdego ze zleconych przekazów pieniężnych.
 
 Aby skorzystać z usługi należy:
@@ -90,8 +90,32 @@ Aby skorzystać z usługi należy:
 - zakończyć definicję zlecenia (PUT /orders/massoutbound/{code}/define)
 - opłacić utworzone zlecenie
 
-### POST /orders/massoutbound
-Tworzy zlecenie 
+### POST /orders/split
+Tworzy zlecenie
+
+Parametr | Opis
+------------ | -------------
+**currency** | (wymagane) waluta zlecenia, aktualnie wspieramy tylko PLN
+
+Przykładowa odpowiedź
+```json
+{
+   "data":{
+      "code":"mju35wnebp6z",
+      "status":"open",
+      "type":"split",
+      "currency":"PLN",
+      "metadata":null,
+      "createdAt":"2020-09-10 02:00:59",
+      "updatedAt":"2020-09-10 02:00:59"
+   },
+   "links":{
+      "rel":"self",
+      "href":"https:\/\/apitest.fiberpay.pl\/1.0\/orders\/split\/mju35wnebp6z"
+   }
+}
+```
+
 
 ### POST /orders/massoutbound/item
 
