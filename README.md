@@ -222,6 +222,66 @@ Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
 
+## Forward transfer
+
+Usługa dwóch powiązanych przekazów pieniężnych, pozwalająca na przyjęcie przekazu pieniężnego, a następnie opłacenie innego przekazu ze środków pierwszego.
+
+Source - osoba opłacająca przekaz
+Target - Odbiorca przekazu
+Broker - Pośrednik (poza FiberPayem)
+
+### POST /orders/forward
+Utworzenie zlecenia. Parametry żądania:
+Parametr | Opis
+------------ | -------------
+**sourceAmount** | (wymagane) całościowa kwota przekazu, decimal z maks. 2 miejscami po przecinku (np. 100.50)
+**targetAmount** | (wymagane) kwota przekazu, która trafi do odbiorcy, decimal z maks. 2 miejscami po przecinku (np. 100.50)
+**currency** | (wymagane) waluta, aktualnie dostępne tylko PLN
+**targetName** | (wymagane) nazwa odbiorcy,
+**targetIban** | (wymagane) IBAN odbiorcy,
+**brokerName** | (wymagane) nazwa pośrednika,
+**brokerIban** | (wymagane) IBAN pośrednika,
+**description** | tytuł przelewu,
+**metadata** | opcjonalne dane przekazywane przez FiberPay w callbacku,
+**callbackUrl** | URL na który ma być wywołany callback
+**callbackParams** | opcjonalne parametry callbacka
+
+### GET /orders/forward/{code}
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
+
+Przykładowa odpowiedź serwera
+```json
+{
+    "data": {
+        "code": "xbwucsgfn5pa",
+        "status": "defined",
+        "type": "forward",
+        "currency": "PLN",
+        "targetAmount": "100.0000",
+        "targetName": "Target",
+        "targetIban": "PL12340000TARGET",
+        "brokerAmount": "48.7500",
+        "brokerName": "Broker",
+        "brokerIban": "PL12340000BROKER",
+        "feeAmount": "1.2500",
+        "createdAt": "2020-09-16 18:43:37",
+        "updatedAt": "2020-09-16 18:43:37"
+    },
+    "invoice": {
+        "amount": "150.00",
+        "currency": "PLN",
+        "iban": "PL123400005",
+        "description": "n9t6k4zw"
+    },
+    "links": {
+        "rel": "self",
+        "href": "https://apitest.fiberpay.pl/1.0/orders/forward/xbwucsgfn5pa"
+    }
+}
+```
+
 ### GET /settlements
 
 ### GET /settlements/{code}
