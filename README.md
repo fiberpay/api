@@ -17,6 +17,7 @@ Do korzystania z API konieczne jest wygenerowanie kluczy:
 ## Nagłówki 
 Każde żądanie do API powinno posiadać następujące nagłówki:
 - Content-Type - application/json
+- Accept - application/json
 - X-API-Key – wygenerowany klucz jawny
 - X-API-Nonce – nonce w postaci liczba naturalnej, każdy następny nonce powinien być większy od poprzedniego (przykładowo można użyć timestampa lub zaokrąglonego microtime jeśli używamy PHP)
 - X-API-Method-And-Uri – informacja o wywoływanej metodzie HTTP oraz URI
@@ -371,13 +372,39 @@ Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
 
+Przykładowa odpowiedź:
+```json
+{
+    "data": {
+        "code": "xwbmedu9",
+        "status": "cancelled",
+        "type": "collect_item",
+        "currency": "PLN",
+        "amount": "100.0000",
+        "feeAmount": "0.5000",
+        "toName": "Michał",
+        "parentCode": "p4rtzey3hnwv",
+        "description": "testowy przelew",
+        "metadata": null,
+        "createdAt": "2020-09-18 17:13:42",
+        "updatedAt": "2020-09-18 17:25:46",
+        "redirect": "https://test.fiberpay.pl/order/xwbmedu9"
+    },
+    "invoice": [],
+    "links": {
+        "rel": "self",
+        "href": "https://apitest.fiberpay.pl/1.0/orders/collect/item/xwbmedu9"
+    }
+}
+```
+
 ## Forward transfer
 
 Usługa dwóch powiązanych przekazów pieniężnych, pozwalająca na przyjęcie przekazu pieniężnego, a następnie opłacenie innego przekazu ze środków pierwszego.
 
-Source - osoba opłacająca przekaz
-Target - Odbiorca przekazu
-Broker - Pośrednik (poza FiberPayem)
+- Source - osoba opłacająca przekaz
+- Target - Odbiorca przekazu
+- Broker - Pośrednik (poza FiberPayem)
 
 ### POST /orders/forward
 Utworzenie zlecenia. Parametry żądania:
