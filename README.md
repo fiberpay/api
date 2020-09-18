@@ -58,7 +58,7 @@ Parametr | Opis
 **toName** | (wymagane) nazwa odbiorcy,
 **toIban** | (wymagane) IBAN odbiorcy,
 **description** | tytuł przelewu,
-**metadata** | opcjonalne dane przekazywane przez FiberPay w callbacku,
+**metadata** | opcjonalne dane przekazywane przez FiberPay w odpowiedzi,
 **callbackUrl** | URL na który ma być wywołany callback
 **callbackParams** | opcjonalne parametry callbacka
 
@@ -69,7 +69,31 @@ Parametr | Opis
 
 Przykładowa odpowiedź serwera
 ```json
-{}
+{
+  "data": {
+      "code": "gjrbwhcx96v7",
+      "status": "defined",
+      "type": "direct",
+      "currency": "PLN",
+      "amount": "100.0000",
+      "feeAmount": "0.5000",
+      "toName": "Michał",
+      "toIban": "PL27114020040000300201355387",
+      "metadata": null,
+      "createdAt": "2020-09-18 17:02:42",
+      "updatedAt": "2020-09-18 17:02:42"
+  },
+  "invoice": {
+      "amount": "100.50",
+      "currency": "PLN",
+      "iban": "PL123400007",
+      "description": "gjrbwhcx96v7"
+  },
+  "links": {
+      "rel": "self",
+      "href": "https://apitest.fiberpay.pl/1.0/orders/direct/gjrbwhcx96v7"
+  }
+}
 ```
 
 ### DELETE /orders/direct/{code}
@@ -78,7 +102,25 @@ Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
 ```json
-{}
+{
+  "data": {
+      "code": "gjrbwhcx96v7",
+      "status": "cancelled",
+      "type": "direct",
+      "currency": "PLN",
+      "amount": "100.0000",
+      "feeAmount": "0.5000",
+      "toName": "Michał",
+      "toIban": "PL27114020040000300201355387",
+      "metadata": null,
+      "createdAt": "2020-09-18 17:02:42",
+      "updatedAt": "2020-09-18 17:03:34"
+  },
+  "links": {
+      "rel": "self",
+      "href": "https://apitest.fiberpay.pl/1.0/orders/direct/gjrbwhcx96v7"
+  }
+}
 ```
 
 ## FiberSplit
@@ -96,22 +138,30 @@ Tworzy zlecenie
 Parametr | Opis
 ------------ | -------------
 **currency** | (wymagane) waluta zlecenia, aktualnie wspieramy tylko PLN
+**metadata** | opcjonalne dane przekazywane przez FiberPay w callbacku,
 
 Przykładowa odpowiedź
 ```json
 {
   "data": {
-    "code": "mju35wnebp6z",
-    "status": "open",
-    "type": "split",
-    "currency": "PLN",
-    "metadata": null,
-    "createdAt": "2020-09-10 02:00:59",
-    "updatedAt": "2020-09-10 02:00:59"
+      "code": "zc6ta75gfpme",
+      "status": "open",
+      "type": "split",
+      "currency": "PLN",
+      "metadata": null,
+      "createdAt": "2020-09-18 17:05:32",
+      "updatedAt": "2020-09-18 17:05:32",
+      "items": []
+  },
+  "invoice": {
+      "amount": "0.00",
+      "currency": "PLN",
+      "iban": null,
+      "description": "zc6ta75gfpme"
   },
   "links": {
-    "rel": "self",
-    "href": "https:\/\/apitest.fiberpay.pl\/1.0\/orders\/split\/mju35wnebp6z"
+      "rel": "self",
+      "href": "https://apitest.fiberpay.pl/1.0/orders/split/zc6ta75gfpme"
   }
 }
 ```
@@ -128,28 +178,31 @@ Parametr | Opis
 **toName** | (wymagane) nazwa odbiorcy
 **toIban** | (wymagane) IBAN odbiorcy
 **description** | (wymagane) tytuł przelewu
+**metadata** | opcjonalne dane przekazywane przez FiberPay w odpowiedzi,
+**callbackUrl** | URL na który ma być wywołany callback
+**callbackParams** | opcjonalne parametry callbacka
 
 Przykładowa odpowiedź
 ```json
 {
   "data": {
-    "code": "ezumcdag",
-    "description": "testowy przelew",
-    "status": "open",
-    "type": "splitItem",
-    "currency": "PLN",
-    "amount": "100",
-    "feeAmount": "1.50",
-    "toName": "Jan Kowalski",
-    "toIban": "PL109023980000000143071844",
-    "parentCode": "mju35wnebp6z",
-    "metadata": null,
-    "createdAt": "2020-09-10 02:08:25",
-    "updatedAt": "2020-09-10 02:08:25"
+      "code": "gmats9v3",
+      "description": "testowy przelew",
+      "status": "open",
+      "type": "split_item",
+      "currency": "PLN",
+      "amount": "100",
+      "feeAmount": "1.50",
+      "toName": "Michał",
+      "toIban": "PL27114020040000300201355387",
+      "parentCode": "m9cqbfhk5x4e",
+      "metadata": null,
+      "createdAt": "2020-09-18 17:07:53",
+      "updatedAt": "2020-09-18 17:07:53"
   },
   "links": {
-    "rel": "self",
-    "href": "https:\/\/apitest.fiberpay.pl\/1.0\/orders\/split\/item\/ezumcdag"
+      "rel": "self",
+      "href": "https://apitest.fiberpay.pl/1.0/orders/split/item/gmats9v3"
   }
 }
 ```
@@ -165,22 +218,46 @@ Przykładowa odpowiedź:
 ```json
 {
   "data": {
-    "code": "mju35wnebp6z",
-    "status": "defined",
-    "type": "split",
-    "currency": "PLN",
-    "metadata": null,
-    "createdAt": "2020-09-10 02:00:59",
-    "updatedAt": "2020-09-10 02:26:05",
-    "payment": {
-      "amount": "203.0000",
+      "code": "m9cqbfhk5x4e",
+      "status": "defined",
+      "type": "split",
+      "currency": "PLN",
+      "metadata": null,
+      "createdAt": "2020-09-18 17:06:30",
+      "updatedAt": "2020-09-18 17:08:38",
+      "items": [
+          {
+              "data": {
+                  "code": "gmats9v3",
+                  "description": "testowy przelew",
+                  "status": "open",
+                  "type": "split_item",
+                  "currency": "PLN",
+                  "amount": "100.0000",
+                  "feeAmount": "1.5000",
+                  "toName": "Michał",
+                  "toIban": "PL27114020040000300201355387",
+                  "parentCode": "m9cqbfhk5x4e",
+                  "metadata": null,
+                  "createdAt": "2020-09-18 17:07:53",
+                  "updatedAt": "2020-09-18 17:07:53"
+              },
+              "links": {
+                  "rel": "self",
+                  "href": "https://apitest.fiberpay.pl/1.0/orders/split/item/gmats9v3"
+              }
+          }
+      ]
+  },
+  "invoice": {
+      "amount": "101.50",
+      "currency": "PLN",
       "iban": "PL123400003",
-      "description": "mju35wnebp6z"
-    }
+      "description": "m9cqbfhk5x4e"
   },
   "links": {
-    "rel": "self",
-    "href": "https:\/\/apitest.fiberpay.pl\/1.0\/orders\/split\/mju35wnebp6z"
+      "rel": "self",
+      "href": "https://apitest.fiberpay.pl/1.0/orders/split/m9cqbfhk5x4e"
   }
 }
 ```
@@ -202,8 +279,80 @@ Parametr | Opis
 
 
 ### POST /orders/collect
+Tworzy zlecenie
+
+Parametr | Opis
+------------ | -------------
+**currency** | (wymagane) waluta przelewu (aktualnie wspierane tylko PLN)
+**toName** | (wymagane) nazwa odbiorcy
+**toIban** | (wymagane) IBAN odbiorcy
+**metadata** | opcjonalne dane przekazywane przez FiberPay w odpowiedzi,
+
+Przykładowa odpowiedź:
+```json
+{
+  "data": {
+      "code": "w3taegy6fzuj",
+      "status": "open",
+      "type": "collect",
+      "currency": "PLN",
+      "toName": "Michał",
+      "toIban": "PL27114020040000300201355387",
+      "metadata": null,
+      "createdAt": "2020-09-18 17:11:46",
+      "updatedAt": "2020-09-18 17:11:46"
+  },
+  "links": {
+      "rel": "self",
+      "href": "https://apitest.fiberpay.pl/1.0/orders/collect/w3taegy6fzuj"
+  }
+}
+```
 
 ### POST /orders/collect/item
+Tworzy pojedynczy przelew do wysłania w ramach całego zlecenia.
+
+Parametr | Opis
+------------ | -------------
+**amount** | (wymagane) kwota przelewu
+**currency** | (wymagane) waluta przelewu (aktualnie wspierane tylko PLN)
+**parentCode** | (wymagane) kod zlecenia nadrzędnego
+**description** | (wymagane) tytuł przelewu
+**metadata** | opcjonalne dane przekazywane przez FiberPay w odpowiedzi,
+**callbackUrl** | URL na który ma być wywołany callback
+**callbackParams** | opcjonalne parametry callbacka
+
+Przykładowa odpowiedź:
+```json
+{
+  "data": {
+      "code": "xwbmedu9",
+      "status": "open",
+      "type": "collect_item",
+      "currency": "PLN",
+      "amount": "100",
+      "feeAmount": "0.50",
+      "toName": "Michał",
+      "parentCode": "p4rtzey3hnwv",
+      "description": "testowy przelew",
+      "metadata": null,
+      "createdAt": "2020-09-18 17:13:42",
+      "updatedAt": "2020-09-18 17:13:42",
+      "redirect": "https://test.fiberpay.pl/order/xwbmedu9"
+  },
+  "invoice": {
+      "amount": "100.50",
+      "currency": "PLN",
+      "iban": "PL123400001",
+      "bban": "123400001",
+      "description": "xwbmedu9"
+  },
+  "links": {
+      "rel": "self",
+      "href": "https://apitest.fiberpay.pl/1.0/orders/collect/item/xwbmedu9"
+  }
+}
+```
 
 ### GET /orders/collect/{code}
 Pobranie informacji o całym zleceniu
@@ -246,11 +395,6 @@ Parametr | Opis
 **callbackUrl** | URL na który ma być wywołany callback
 **callbackParams** | opcjonalne parametry callbacka
 
-### GET /orders/forward/{code}
-Parametr | Opis
------------- | -------------
-**code** | (wymagane) kod zlecenia
-
 Przykładowa odpowiedź serwera
 ```json
 {
@@ -281,6 +425,11 @@ Przykładowa odpowiedź serwera
     }
 }
 ```
+
+### GET /orders/forward/{code}
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
 
 ### GET /settlements
 
