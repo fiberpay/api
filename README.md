@@ -63,11 +63,6 @@ Parametr | Opis
 **callbackUrl** | URL na który ma być wywołany callback
 **callbackParams** | opcjonalne parametry callbacka
 
-### GET /orders/direct/{code}
-Parametr | Opis
------------- | -------------
-**code** | (wymagane) kod zlecenia
-
 Przykładowa odpowiedź serwera
 ```json
 {
@@ -96,6 +91,11 @@ Przykładowa odpowiedź serwera
   }
 }
 ```
+
+### GET /orders/direct/{code}
+Parametr | Opis
+------------ | -------------
+**code** | (wymagane) kod zlecenia
 
 ### DELETE /orders/direct/{code}
 Anulowanie wcześniej utworzonego zlecenia (możliwe tylko dla jeszcze nieopłaconych zleceń).
@@ -403,8 +403,8 @@ Przykładowa odpowiedź:
 Usługa dwóch powiązanych przekazów pieniężnych, pozwalająca na przyjęcie przekazu pieniężnego, a następnie opłacenie innego przekazu ze środków pierwszego.
 
 - Source - osoba opłacająca przekaz
-- Target - Odbiorca przekazu
-- Broker - Pośrednik (poza FiberPayem)
+- Target - odbiorca przekazu
+- Broker - pośrednik (poza FiberPayem)
 
 ### POST /orders/forward
 Utworzenie zlecenia. Parametry żądania:
@@ -422,7 +422,7 @@ Parametr | Opis
 **callbackUrl** | URL na który ma być wywołany callback
 **callbackParams** | opcjonalne parametry callbacka
 
-Przykładowa odpowiedź serwera
+Przykładowa odpowiedź serwera:
 ```json
 {
     "data": {
@@ -462,3 +462,44 @@ Parametr | Opis
 
 ### GET /settlements/{code}
 
+## Środowisko testowe
+Dostępne są tutaj dodatkowe metody ułatwiające sprawdzanie działalności systemu oraz automatyzacja testów.
+
+### Automatyzacja testów
+Sprawdzenie nowych przelewów w systemie - co minutę
+Uruchomienie przetwarzania zleceń po otrzymaniu dla nich wpłaty - co minutę
+Wysyłanie callbacków - co minutę
+Przetwarzanie zleceń typu Collect - co godzinę
+Przetworzenie przelewów wychodzących - co minutę
+
+### Dodatkowe ścieżki
+
+### POST /bankTransactions
+Symulacja przychodzącego przelewu bankowego.
+
+Parametr | Opis
+------------ | -------------
+**amount** | (wymagane) kwota przelewu
+**currency** | (wymagane) waluta przelewu (aktualnie wspierane tylko PLN)
+**fromName** | (wymagane) nazwa nadawcy
+**fromIban** | (wymagane) IBAN nadawcy
+**description** | (wymagane) tytuł przelewu (kod zlecenia)
+
+Przykładowa odpowiedź serwera:
+```json
+{
+    "data": {
+        "contractorName": "TEST",
+        "contractorIban": "PL12340000TEST",
+        "amount": 100.5,
+        "currency": "PLN",
+        "description": "kn8sf7amj6xy",
+        "bankReferenceCode": "kn8sf7amj6xy",
+        "operationCode": "kn8sf7amj6xy",
+        "accountIban": "PL123400007",
+        "bookedAt": "2020-09-18 13:30:28",
+        "createdAt": "2020-09-18 13:30:28",
+        "updatedAt": "2020-09-18 13:30:28"
+    }
+}
+```
