@@ -466,11 +466,11 @@ Parametr | Opis
 Dostępne są tutaj dodatkowe metody ułatwiające sprawdzanie działalności systemu oraz automatyzacja testów.
 
 ### Automatyzacja testów
-Sprawdzenie nowych przelewów w systemie - co minutę
-Uruchomienie przetwarzania zleceń po otrzymaniu dla nich wpłaty - co minutę
-Wysyłanie callbacków - co minutę
-Przetwarzanie zleceń typu Collect - co godzinę
-Przetworzenie przelewów wychodzących - co minutę
+- Sprawdzenie nowych przelewów w systemie - co minutę
+- Uruchomienie przetwarzania zleceń po otrzymaniu dla nich wpłaty - co minutę
+- Wysyłanie callbacków - co minutę
+- Przetwarzanie zleceń typu Collect - co godzinę
+- Przetworzenie przelewów wychodzących - co minutę
 
 ### Dodatkowe ścieżki
 
