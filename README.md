@@ -418,6 +418,7 @@ Parametr | Opis
 **brokerName** | (wymagane) nazwa pośrednika,
 **brokerIban** | (wymagane) IBAN pośrednika,
 **description** | tytuł przelewu,
+**targetDescription** | (wymagane) Opis dla odbiorcy,
 **metadata** | opcjonalne dane przekazywane przez FiberPay w callbacku,
 **callbackUrl** | URL na który ma być wywołany callback
 **callbackParams** | opcjonalne parametry callbacka
@@ -433,6 +434,7 @@ Przykładowa odpowiedź serwera:
         "targetAmount": "100.0000",
         "targetName": "Target",
         "targetIban": "PL12340000TARGET",
+        "targetDescription": "targetDescription",
         "brokerAmount": "48.7500",
         "brokerName": "Broker",
         "brokerIban": "PL12340000BROKER",
