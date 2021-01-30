@@ -502,9 +502,17 @@ Parametr | Opis
 
 # Sandbox (środowisko testowe)
 
-Dostępne są tutaj dodatkowe metody ułatwiające sprawdzanie działalności systemu oraz automatyzacja testów.
+
+## Wprowadzenie
+
+Na środowisku testowym dostępne są:
+
+ - automatyzacja testów
+ - dodatkowe metody ułatwiające sprawdzanie działalności systemu.
+
 
 ## Automatyzacja testów
+
 - Sprawdzenie nowych przelewów w systemie - co minutę
 - Uruchomienie przetwarzania zleceń po otrzymaniu dla nich wpłaty - co minutę
 - Wysyłanie callbacków - co minutę
