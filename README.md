@@ -508,7 +508,7 @@ Parametr | Opis
 Na środowisku testowym dostępne są:
 
  - automatyzacja testów
- - dodatkowe metody ułatwiające sprawdzanie działalności systemu.
+ - dodatkowe metody API ułatwiające sprawdzanie działalności systemu.
 
 
 ## Automatyzacja testów
