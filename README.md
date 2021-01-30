@@ -46,7 +46,7 @@ Informacje jak odkodować lub jakich bibliotek użyć do obsługi tokenu JWT są
 
 # Opis usług
 
-## Direct transfer
+## FiberDirect
 
 Usługa pojedynczego przekazu pieniężnego na konkretne konto bankowe. Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany przekaz zostanie opłacony, a także gdy FiberPay wykonana już dany przekaz na wskazane konto.
 
@@ -398,7 +398,7 @@ Przykładowa odpowiedź:
 }
 ```
 
-## Forward transfer
+## FiberForward
 
 Usługa dwóch powiązanych przekazów pieniężnych, pozwalająca na przyjęcie przekazu pieniężnego, a następnie opłacenie innego przekazu ze środków pierwszego.
 
@@ -464,7 +464,8 @@ Parametr | Opis
 
 ### GET /settlements/{code}
 
-## Środowisko testowe
+## Sandbox (środowisko testowe)
+
 Dostępne są tutaj dodatkowe metody ułatwiające sprawdzanie działalności systemu oraz automatyzacja testów.
 
 ### Automatyzacja testów
@@ -477,6 +478,7 @@ Dostępne są tutaj dodatkowe metody ułatwiające sprawdzanie działalności sy
 ### Dodatkowe ścieżki
 
 ### POST /bankTransactions
+
 Symulacja przychodzącego przelewu bankowego.
 
 Parametr | Opis
