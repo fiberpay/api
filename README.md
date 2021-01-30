@@ -1,6 +1,8 @@
 # Informacje ogólne
 
+
 ## Adresy serwerów
+
 Produkcyjne API: https://api.fiberpay.pl/1.0
 frontend produkcyjny: https://fibepay.pl
 
@@ -9,12 +11,16 @@ frontend testowy: https://test.fiberpay.pl
 
 Są to zupełnie rozdzielone środowiska (łącznie z infrastrukturą). **Klucze API z jednego środowiska nie będą działać w drugim**.
 
+
 ## Klucze API
+
 Do korzystania z API konieczne jest wygenerowanie kluczy:
 - jawnego (publicKey) - używanego do przesyłania w ramach żądań API
 - tajnego (secretKey) - używanego do podpisywania żądań (nigdy nie powinien by przesyłany lub ujawniany)
 
+
 ## Nagłówki 
+
 Każde żądanie do API powinno posiadać następujące nagłówki:
 - Content-Type - application/json
 - Accept - application/json
@@ -25,15 +31,19 @@ Każde żądanie do API powinno posiadać następujące nagłówki:
   - np. POST /api/order/create/massoutbound/item
 - X-API-Signature – podpis z użyciem skrótu **sha512** stworzonego przy użyciu **_‘message’_**, **_‘nonce’_**, **_‘apikey’_**, **_‘requestBody’_** i **_‘secretkey’_**
 
+
 ### Instrukcja utworzenia X-API-Signature
+
 Należy utworzyć połączony ciąg znaków (concatenated string) składający się z message, nonce, apikey oraz requestBody (kolejność ma znaczenie!), a następnie 
 wygenerować skrót **sha512** z utworzonego ciągu używając **secretkey**.
-- przykładowa impelmentacja w PHP:    
+
+Przykładowa impelmentacja w PHP:    
 ```php
 $implodeParams = implode( ‘’, [$message, $nonce, $apikey, $requestBody]);
 hash_hmac(‘sha512’, $implodeParams, $secretkey)
 ```
 $requestBody to ciało (body) żądania HTTP. Gdy go brak to powinien zostać użyty pusty string ('').
+
 
 ## Mechanizm callbacków
 
@@ -124,7 +134,9 @@ Parametr | Opis
 }
 ```
 
+
 ## FiberSplit
+
 Usługa gdzie FiberPay może wykonać wiele przekazów pieniężnych w zamian za jedną opłatę (np. 100 przelewów na wybrane konta bankowe). Platforma korzystająca z API może założyć zlecenie, a następnie dostać potwierdzenie, gdy dany zostanie ono płacone, a także dostać informacje dot. statusu każdego ze zleconych przekazów pieniężnych.
 
 Aby skorzystać z usługi należy:
@@ -133,7 +145,9 @@ Aby skorzystać z usługi należy:
 - zakończyć definicję zlecenia (PUT /orders/massoutbound/{code}/define)
 - opłacić utworzone zlecenie
 
+
 ### POST /orders/split
+
 Tworzy zlecenie
 
 Parametr | Opis
@@ -167,8 +181,8 @@ Przykładowa odpowiedź
 }
 ```
 
-
 ### POST /orders/split/item
+
 Tworzy pojedynczy przelew do wysłania w ramach całego zlecenia.
 
 Parametr | Opis
@@ -209,6 +223,7 @@ Przykładowa odpowiedź
 ```
 
 ### PUT /orders/split/{code}/define
+
 Kończy tworzenie orderu (zamyka definicję).
 
 Parametr | Opis
@@ -262,24 +277,30 @@ Przykładowa odpowiedź:
   }
 }
 ```
+
 ### GET /orders/split/{code}
+
 Pobranie informacji o całym zleceniu
+
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
+
 
 ### GET /orders/split/item/{code}
+
 Pobranie informacji o poszczególnym przekazie pieniężnym
+
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
-
 
 
 ## FiberCollect
 
 
 ### POST /orders/collect
+
 Tworzy zlecenie
 
 Parametr | Opis
@@ -311,6 +332,7 @@ Przykładowa odpowiedź:
 ```
 
 ### POST /orders/collect/item
+
 Tworzy pojedynczy przelew do wysłania w ramach całego zlecenia.
 
 Parametr | Opis
@@ -356,18 +378,25 @@ Przykładowa odpowiedź:
 ```
 
 ### GET /orders/collect/{code}
+
 Pobranie informacji o całym zleceniu
+
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
+
 
 ### GET /orders/collect/item/{code}
+
 Pobranie informacji o pojedynczej wpłacie
+
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
 
+
 ### DELETE /orders/collect/item/{code}
+
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
@@ -406,8 +435,11 @@ Usługa dwóch powiązanych przekazów pieniężnych, pozwalająca na przyjęcie
 - Target - odbiorca przekazu
 - Broker - pośrednik (poza FiberPayem)
 
+
 ### POST /orders/forward
+
 Utworzenie zlecenia. Parametry żądania:
+
 Parametr | Opis
 ------------ | -------------
 **sourceAmount** | (wymagane) całościowa kwota przekazu, decimal z maks. 2 miejscami po przecinku (np. 100.50)
@@ -456,24 +488,32 @@ Przykładowa odpowiedź serwera:
 ```
 
 ### GET /orders/forward/{code}
+
 Parametr | Opis
 ------------ | -------------
 **code** | (wymagane) kod zlecenia
 
+
 ### GET /settlements
+
 
 ### GET /settlements/{code}
 
-## Sandbox (środowisko testowe)
+
+# Sandbox (środowisko testowe)
 
 Dostępne są tutaj dodatkowe metody ułatwiające sprawdzanie działalności systemu oraz automatyzacja testów.
 
-### Automatyzacja testów
+## Automatyzacja testów
 - Sprawdzenie nowych przelewów w systemie - co minutę
 - Uruchomienie przetwarzania zleceń po otrzymaniu dla nich wpłaty - co minutę
 - Wysyłanie callbacków - co minutę
 - Przetwarzanie zleceń typu Collect - co godzinę
 - Przetworzenie przelewów wychodzących - co minutę
+
+
+## Symulacja transakcji bankowych
+
 
 ### POST /bankTransactions
 
