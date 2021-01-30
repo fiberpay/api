@@ -475,11 +475,9 @@ Dostępne są tutaj dodatkowe metody ułatwiające sprawdzanie działalności sy
 - Przetwarzanie zleceń typu Collect - co godzinę
 - Przetworzenie przelewów wychodzących - co minutę
 
-### Dodatkowe ścieżki
-
 ### POST /bankTransactions
 
-Symulacja przychodzącego przelewu bankowego.
+Symulacja przychodzącego przelewu bankowego. Dostępna tylko w środowisku testowym.
 
 Parametr | Opis
 ------------ | -------------
