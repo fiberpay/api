@@ -4,7 +4,7 @@
 ## Adresy serwerów
 
 Produkcyjne API: https://api.fiberpay.pl/1.0
-frontend produkcyjny: https://fibepay.pl
+frontend produkcyjny: https://fiberpay.pl
 
 API testowe: https://apitest.fiberpay.pl/1.0
 frontend testowy: https://test.fiberpay.pl
