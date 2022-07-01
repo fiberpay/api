@@ -2,7 +2,6 @@
 Wprowadzenie do usług dostępnych za pośrednictwem Fiber API
 ---
 
-# Wprowadzenie
 
 FiberPay posiada szereg rozwiązań wspierających rozwiązania FinTech. Wszystkie rozwiązania są dostępne w formie API.    
 
