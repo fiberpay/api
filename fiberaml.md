@@ -79,6 +79,7 @@ a) individual:
 | **documentType**           | TAK      | Rodzaj dokumentu Aktualnie wspierane: id\_card, passport, residency\_card (nie jest wymagany jeśli nie ma numeru pesel) |
 | **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                           |
 | **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                                                               |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                                                                    |
 | **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                                                                |
 | **birthCity**              | NIE      | Miasto urodzenia                                                                                                        |
 | **birthCountry**           | NIE      | Kraj urodzenia                                                                                                          |
@@ -320,6 +321,106 @@ a) kontakt:
         "createdAt": "2022-06-01T14:52:12.000000Z"
       }
     ]
+  }
+}
+```
+
+### PATCH /parties
+
+Edycja utworzonego wcześniej podmiotu. Parametry żądania:
+
+| Parametr | Wymagane | Opis                                                                        |
+| -------- | -------- | --------------------------------------------------------------------------- |
+| **code** | TAK      | Kod podmiotu.                                       |
+
+Pozostałe parametry żądania są identyczne jak w przypadku tworzenia podmiotu.
+
+#### Przykładowe dane do edycji podmiotu typu 'individual':
+
+```json
+{
+  "code": "xswyvgqa37zp",
+  "type": "individual",
+  "firstName": "Jan",
+  "lastName": "Kowalski",
+  "personalIdentityNumber": "01234567880",
+  "documentType": "id_card",
+  "documentNumber": "AAA123456",
+  "documentExpirationDate": "2022-10-15",
+  "withoutExpirationDate" : false,
+  "citizenship": "PL",
+  "birthCity": "Warszawa",
+  "birthCountry": "PL",
+  "politicallyExposed": false,
+  "accommodationAddress": {
+    "country": "PL",
+    "city": "Warszawa",
+    "street": "Grzybowska",
+    "houseNumber": "4",
+    "flatNumber": "106",
+    "postalCode": "00-131"
+  },
+  "forwardAddress": {
+    "country": "PL",
+    "city": "Warszawa",
+    "street": "Grzybowska",
+    "houseNumber": "4",
+    "flatNumber": "106",
+    "postalCode": "11-131"
+  }
+}
+```
+
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 200 OK**
+
+```json
+{
+  "data": {
+    "code": "htu7evj63xkf",
+    "type": "individual",
+    "entity": {
+      "code": "1jz4p297vgxd",
+      "firstName": "Jan",
+      "lastName": "Kowalski",
+      "personalIdentityNumber": "50201204873",
+      "documentType": "id_card",
+      "documentNumber": "aze123456",
+      "documentExpirationDate": "2022-10-15",
+      "withoutExpirationDate": false,
+      "citizenship": "PL",
+      "birthCity": "Dębica",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "createdAt": "2022-06-01T14:38:22.000000Z",
+      "birthDate": null
+    },
+    "addresses": [
+      {
+        "code": "jnh1s2854a6f",
+        "type": "accommodation_address",
+        "country": "PL",
+        "city": "Warszawa",
+        "street": "Grzybowska",
+        "houseNumber": "4",
+        "flatNumber": "106",
+        "postalCode": "00-131",
+        "createdAt": "2022-06-01T14:38:22.000000Z"
+      },
+      {
+        "code": "bhjp8254amxw",
+        "type": "forwarding_address",
+        "country": "PL",
+        "city": "Warszawa",
+        "street": "Grzybowska",
+        "houseNumber": "4",
+        "flatNumber": "106",
+        "postalCode": "00-131",
+        "createdAt": "2022-07-18T11:44:46.000000Z"
+      }
+    ],
+    "contacts": []
   }
 }
 ```
@@ -617,6 +718,189 @@ Usunięcie beneficjenta rzeczywistego wskazanego kodem identyfikującym.
 
 Usunięcie podmiotu wskazanego kodem identyfikującym.
 
+## POST /transactions
+
+Utworzenie nowej transakcji. Parametry żądania:
+
+| Parametr | Wymagane | Opis                                                                        |
+| -------- | -------- | --------------------------------------------------------------------------- |
+| **type** | TAK      | Typ podmiotu. Aktualnie wspierane: buyer, vender, broker |
+| **occasionalTransaction** | TAK      | Informacja czy transakcja jest okazjonalna (bool) |
+
+Jeśli transakcja jest oznaczona jako okazjonalna wymagane są następujące parametry:
+
+| Parametr          | Wymagane | Opis                                                               |
+| --------          | -------- | ------------------------------------------------------------------ |
+| **amount**        | TAK      | Kwota transakcji                                                   |
+| **currency**      | TAK      | Waluta transakcji                                                  |
+| **location**      | NIe      | Kraj w którym została przeprowadzona transakcja                    |
+| **bookedAt**      | NIE      | Data zaksięgowania transakcji                                      |
+| **description**   | NIE      | Opis transakcji (tytuł, przedmiot transakcji itd.)                 |
+| **references**    | NIE      | Referencje własne                                                  |
+| **paymentMethod** | NIE      | Sposób płatności                                                   |
+| **senderIban**    | NIE      | Numer konta nadawcy (gdy sposób płatności bank_transfer)           |
+| **receiverIban**  | NIE      | Numer konta odbiorcy (gdy sposób płatności brank_transfer)         |
+
+Jeśli transakcja nie jest oznaczona jako okazjonalna dodatkowo należy podać poniższe parametry:
+
+| Parametr                | Wymagane | Opis                                                         |
+| --------                | -------- | ------------------------------------------------------------ |
+| **senderFirstName**     | NIE      | Imie nadawcy (jeśli nie jest podany kod nadawcy)             |
+| **senderLastName**      | NIE      | Nazwisko nadawcy (jeśli nie jest podany kod nadawcy)         |
+| **senderCompanyName**   | NIE      | Nazwa firmy nadawcy (jeśli nie jest podany kod nadawcy)      |
+| **senderCode**          | TAK      | Kod podmiotu nadawcy                                         |
+| **receiverFirstName**   | NIE      | Imie odbiorcy (jeśli nie jest podany kod odbiorcy)           |
+| **receiverLastName**    | NIE      | Nazwisko odbiorcy (jeśli nie jest podany kod odbiorcy)       |
+| **receiverCompanyName** | NIE      | Nazwa firmy odbiorcy (jeśli nie jest podany kod odbiorcy)    |
+| **receiverCode**        | TAK      | Kod podmiotu odbiorcy                                        |
+
+#### Przykładowe dane do utworzenia transakcji:
+
+```json
+  {
+    "type": "broker",
+    "occasionalTransaction": false,
+    "amount": 1250,
+    "currency": "PLN",
+    "location": "PL",
+    "bookedAt": "2021-05-10 11:06:29",
+    "description": "zapłata za rower",
+    "references": "ABC123123123",
+    "paymentMethod": "bank_transfer",
+    "senderIban": "PL12341234123412341234123412",
+    "receiverIban": "PL34123412341234123412341234",
+    "senderFirstName": "",
+    "senderLastName": "",
+    "senderCode": "htu7evj63xkf",
+    "receiverFirstName": "",
+    "receiverLastName": "",
+    "receiverCode": "8mjken1c725h"
+  }
+```
+
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 201 CREATED**
+```json
+{
+  "data": {
+    "code": "wz2xfsumnjrv",
+    "type": "broker",
+    "status": "new",
+    "amount": "1250.00",
+    "currency": "PLN",
+    "location": "PL",
+    "bookedAt": "2021-05-10 11:06:29",
+    "description": "zapłata za rower",
+    "paymentMethod": "bank_transfer",
+    "senderFirstName": "Jan",
+    "senderLastName": "Kowalski",
+    "senderCompanyName": null,
+    "senderIban": "PL12341234123412341234123412",
+    "senderCode": "htu7evj63xkf",
+    "receiverFirstName": null,
+    "receiverLastName": null,
+    "receiverCompanyName": "super firma",
+    "receiverIban": "PL34123412341234123412341234",
+    "receiverCode": "8mjken1c725h",
+    "references": "ABC123123123",
+    "createdAt": "2022-07-18T12:39:00.000000Z",
+    "occasionalTransaction": null
+  }
+}
+```
+
+### GET /transactions
+
+Zwraca transakcje utworzone przez użytkownika.
+
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 200 OK**
+
+```json
+{
+  "data": [
+    {
+      "code": "nx9dpmhkrqz7",
+      "type": "broker",
+      "senderFirstName": "Jan",
+      "senderLastName": "Kowalski",
+      "senderCompanyName": null,
+      "amount": "11250.00",
+      "description": "auto",
+      "receiverFirstName": "Adam",
+      "receiverLastName": "Nowak",
+      "receiverCompanyName": null
+    },
+    {
+      "code": "gwt3kpbqr1hy",
+      "type": "buyer",
+      "senderFirstName": null,
+      "senderLastName": null,
+      "senderCompanyName": null,
+      "amount": "1250.00",
+      "description": "rower",
+      "receiverFirstName": "Adam",
+      "receiverLastName": "Nowak",
+      "receiverCompanyName": null
+    },
+    {
+      "code": "2fyu8m6e19qd",
+      "type": "vender",
+      "senderFirstName": "Jan",
+      "senderLastName": "Kowalski",
+      "senderCompanyName": null,
+      "amount": "25.00",
+      "description": "bilety",
+      "receiverFirstName": null,
+      "receiverLastName": null,
+      "receiverCompanyName": null
+    }
+  ]
+}
+```
+### GET /transactions/{code}
+
+Pobranie szczegółów danej transakcji.
+
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 200 OK**
+
+```json
+{
+  "data": {
+    "code": "zf14tw35pcqu",
+    "type": "broker",
+    "status": "new",
+    "amount": "1250.00",
+    "currency": "PLN",
+    "location": "PL",
+    "bookedAt": "2021-05-10 11:06:29",
+    "description": "rower",
+    "paymentMethod": "cash",
+    "senderFirstName": "Jan",
+    "senderLastName": "Kowalski",
+    "senderCompanyName": null,
+    "senderIban": "PL34123412341234123412341234",
+    "senderCode": null,
+    "receiverFirstName": "Adam",
+    "receiverLastName": "Nowak",
+    "receiverCompanyName": null,
+    "receiverIban": "PL12341234123412341234123412",
+    "receiverCode": null,
+    "references": "kupno roweru",
+    "createdAt": "2022-06-20T14:04:38.000000Z",
+    "occasionalTransaction": 0
+  }
+}
+```
+
+### DELETE /transactions/{code}
+
+Usunięcie transakcji wskazanej kodem identyfikującym.
+
 ### POST /events
 
 Tworzenie nowego zdarzenia w systemie. Parametry żądania:
@@ -778,6 +1062,90 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 }
 ```
 
+### POST /alerts
+
+Utworzenie nowego alertu. Tworzony przez użytkownika alert będzie miał przypisany rodzaj "zadanie". Parametry żądania:
+
+| Parametr            | Wymagane | Opis                                                                        |
+| --------            | -------- | --------------------------------------------------------------------------- |
+| **content**         | TAK      | Treść alertu.                                                               |
+| **partyCode**       | NIE      | Kod powiązanego podmiotu.                                                   |
+| **transactionCode** | NIE      | Kod powiązanej transakcji.                                                  |
+
+#### Przykładowe dane do utworzenia alertu:
+
+```json
+{
+  "content": "alert testowy api",
+  "transactionCode": "",
+  "partyCode": "",
+}
+```
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 201 CREATED**
+
+```json
+{
+  "data":
+    {
+      "code": "9u187g4y2fcq",
+      "content": "alert testowy api",
+      "type": "task",
+      "status": "new",
+      "taskDone": false,
+      "partyCode": null,
+      "transactionCode": null,
+      "createdAt": "2022-07-18T13:22:42.000000Z"
+    }
+}
+```
+
+### GET /alerts
+
+Pobranie alertów powiązanych z danym użytkownikiem.
+
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 200 OK**
+
+```json
+{
+  "data": [
+    {
+      "code": "9u187g4y2fcq",
+      "content": "alert testowy api",
+      "type": "task",
+      "status": "new",
+      "partyCode": null,
+      "transactionCode": null
+    }
+  ]
+}
+```
+### GET /alerts/{code}
+
+Pobranie szczegółów wskazanego kodem alertu.
+
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 200 OK**
+
+```json
+{
+  "data": {
+    "code": "9u187g4y2fcq",
+    "content": "alert testowy api",
+    "type": "task",
+    "status": "new",
+    "taskDone": false,
+    "partyCode": null,
+    "transactionCode": null,
+    "createdAt": "2022-07-18T13:22:42.000000Z"
+  }
+}
+```
+
 ### GET /subscriptions
 
 Zwraca możliwe do wykupienia plany subskrypcji.
@@ -888,3 +1256,6 @@ Utworzenie nowej subskrypcji. Parametry żądania:
     }
 }
 ```
+## DELETE /subscriptions/{code}
+
+Usunięcie subksrypcji wskazanej kodem identyfikującym. Subksrypcja może zostać usunięta tylko wtedy gdy nie jest jeszcze opłacona.
