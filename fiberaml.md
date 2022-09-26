@@ -714,6 +714,9 @@ W przypadku gdy podmiot nie posiada dodanych beneficjentów rzeczywistych zwraca
 
 Usunięcie beneficjenta rzeczywistego wskazanego kodem identyfikującym.
 
+### GET /parties/pdf/{code}
+
+Rozpoczyna pobieranie raportu pdf z podmiotu wskazanego kodem identyfikującym.
 ### DELETE /parties/{code}
 
 Usunięcie podmiotu wskazanego kodem identyfikującym.
@@ -896,6 +899,10 @@ Pobranie szczegółów danej transakcji.
   }
 }
 ```
+
+### GET /transactions/pdf/{code}
+
+Rozpoczyna pobieranie raportu pdf z transakcji wskazanej kodem identyfikującym.
 
 ### DELETE /transactions/{code}
 
@@ -1246,16 +1253,143 @@ Utworzenie nowej subskrypcji. Parametry żądania:
 
 ```json
 {
-    "data": {
-        "code": "f6xuvsw5jgz4",
-        "type": "monthPlan",
-        "status": "waiting_for_payment",
-        "availableFrom": "2022-06-30T22:00:00.000000Z",
-        "availableTo": "2022-07-31T22:00:00.000000Z",
-        "redirect": "http://fiberpay.pl/"
-    }
+  "data": {
+      "code": "f6xuvsw5jgz4",
+      "type": "monthPlan",
+      "status": "waiting_for_payment",
+      "availableFrom": "2022-06-30T22:00:00.000000Z",
+      "availableTo": "2022-07-31T22:00:00.000000Z",
+      "redirect": "http://fiberpay.pl/"
+  }
 }
 ```
-## DELETE /subscriptions/{code}
+### DELETE /subscriptions/{code}
 
 Usunięcie subksrypcji wskazanej kodem identyfikującym. Subksrypcja może zostać usunięta tylko wtedy gdy nie jest jeszcze opłacona.
+
+### GET /google/info
+
+Zwraca informację na temat nawiązanego połączenia z dyskiem google.
+
+
+#### Przykładowa odpowiedź serwera:
+
+```json
+{
+  "data": {
+    "code":"2p9nr1uj7e8q",
+    "status":"connected",
+    "gdEmail":"fiberpay@info.pl",
+    "createdAt":"2022-09-26T09:13:47.000000Z"
+  }
+}
+```
+### GET /google/login
+
+Umożliwia nawiązanie połączenia z dyskiem google. Jeśli jest to pierwsze nawiązywanie połączenia ścieżka zwraca url, który przekieruje na stronę logowania. Jest to wymagane w celu zapisywania załączników na dysku google klienta.
+
+### POST /google/auth
+
+Po udanym zalogowaniu google zwraca informację o kodzie użytkownika. Ten kod musi zostać przekazany w body tego żądania. Dzięki temu, system aml będzie mógł utworzyć token dostępu do dysku google.
+
+#### Przykładowe dane do utworzenia tokenu dostępu:
+
+```json
+{
+  "code": "4/0XXXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXX-vXXX",
+}
+```
+### GET /google/logout
+
+Usunięcie powiązania z dyskiem google. Wylogowanie systemu aml z dysku google klienta. Nie powoduje usunięcia załączników z dysku google.
+
+### GET /transactions/{code}/attachments
+
+Zwraca listę załączników powiązanych z transakcją wskazaną kodem identyfikującym.
+
+#### Przykładowa odpowiedź serwera:
+
+```json
+{
+  "data":[
+    {
+      "name":"fiberpay-logo.jpeg",
+      "id":"1oNeDxA4mD4d1SXeCyYvZeSwSAGdoOqJp",
+      "mimeType":"image\/jpeg",
+      "createdTime":"2022-09-07T12:27:32.597Z",
+      "size":"4242795"
+    },
+    {
+      "name":"bilet.pdf",
+      "id":"1doMeLr9Boe2abByDzswLS7z_aEvBG6Dm",
+      "mimeType":"application\/pdf",
+      "createdTime":"2022-09-06T14:37:31.284Z",
+      "size":"112852"
+    }
+  ]
+}
+```
+
+### GET /transactions/{code}/attachments
+
+Zwraca listę załączników powiązanych z podmiotem wskazanym kodem identyfikującym.
+
+#### Przykładowa odpowiedź serwera:
+
+```json
+{
+  "data":[
+    {
+      "name":"fiberpay-logo.jpeg",
+      "id":"1oNeDxA4mD4d1SXeCyYvZeSwSAGdoOqJp",
+      "mimeType":"image\/jpeg",
+      "createdTime":"2022-09-07T12:27:32.597Z",
+      "size":"4242795"
+    },
+    {
+      "name":"bilet.pdf",
+      "id":"1doMeLr9Boe2abByDzswLS7z_aEvBG6Dm",
+      "mimeType":"application\/pdf",
+      "createdTime":"2022-09-06T14:37:31.284Z",
+      "size":"112852"
+    }
+  ]
+}
+```
+
+### GET /attachments/{gdId}
+
+Rozpoczyna pobieranie załącznika wskazanego numerem identyfikacyjnym z dysku google.
+### DELETE /attachments/{gdId}
+
+Usuwa załącznik wskazany numerem identyfikacyjnym z dysku google.
+
+### POST /transactions/attachments/{code}
+
+Dodaje załącznik do transakcji wskazanej kodem identyfikującym. Załącznik zostanie zapisany na dysku google. Autoryzacyjny token jwt powinien posiadać sygnaturę na podstawie klucza tajnego. Treść tokenu może być pusta.
+
+Wymagane nagłówki:
+ ```json
+ {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": "Bearer autoryzacyjny.token.jwt"
+ }
+ ```
+
+ Do tak utworzonego żądania należy załączyć w body plik, który będzie załącznikiem dodanym do dysku google.
+
+### POST /parties/attachments/{code}
+
+Dodaje załącznik do podmiotu wskazanego kodem identyfikującym. Załącznik zostanie zapisany na dysku google. Autoryzacyjny token jwt powinien posiadać sygnaturę na podstawie klucza tajnego. Treść tokenu może być pusta.
+
+Wymagane nagłówki:
+ ```json
+ {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": "Bearer autoryzacyjny.token.jwt"
+ }
+ ```
+
+ Do tak utworzonego żądania należy załączyć w body plik, który będzie załącznikiem dodanym do dysku google.
