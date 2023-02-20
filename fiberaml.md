@@ -97,8 +97,8 @@ b) sole\_proprietorship - wszystkie powyższe oraz:
 | **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)             |
 | **references**                     | NIE      | Referencje własne                                                   |
 | **nationalBusinessRegistryNumber** | NIE      | Regon prowadzonej działalności                                      |
-| **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP) |
 | **companyName**                    | NIE      | Nazwa prowadzonej działalności                                      |
+| **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP) |
 | **pkdCodes**                       | NIE      | Tablica z pozostałymi kodami PKD (tablica zawierająca obiekty jw.)  |
 
 Struktura obiektu z kodem PKD:
@@ -112,19 +112,66 @@ c) company:
 
 | Parametr                           | Wymagane | Opis                                                                |
 | ---------------------------------- | -------- | ------------------------------------------------------------------- |
-| **companyName**                    | NIE      | Nazwa firmy                                                         |
 | **taxIdNumber**                    | TAK      | Numer NIP                                                           |
-| **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                         |
-| **tradeName**                      | NIE      | Nazwa handlowa firmy                                                |
-| **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                           |
-| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli
-nie ma numeru NIP). Aktualnie wspierane: limited\_liability\_company, civil\_partnership\_company,
-general\_partnership\_company, professional\_partnership\_company,
-limited\_partnership\_company, limited\_joint\_stock\_partnership\_company, stock\_company                            |
-| **industry**                       | NIE      | Branża                                                              |
-| **servicesDescription**            | NIE      | Opis usług                                                          |
 | **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)             |
 | **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP)        |
+| **companyName**                    | NIE      | Nazwa firmy                                                         |
+| **tradeName**                      | NIE      | Nazwa handlowa firmy                                                |
+| **references**                     | NIE      | Referencje własne                                                   |
+| **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                         |
+| **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                           |
+| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli nie ma numeru NIP). Aktualnie wspierane: limited\_liability\_company, civil\_partnership\_company, general\_partnership\_company, professional\_partnership\_company,limited\_partnership\_company, limited\_joint\_stock\_partnership\_company, stock\_company                            |
+| **website**                        | NIE      | Strona internetowa                                                  |
+| **servicesDescription**            | NIE      | Opis usług                                                          |
+| **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP) |
+| **pkdCodes**                       | NIE      | Tablica z pozostałymi kodami PKD (tablica zawierająca obiekty jw.)  |
+| **beneficiaries**                  | NIE      | Tablica obiektów z danymi beneficjentów                            |
+| **boardMembers**                   | NIE      | Tablica obiektów z danymi członków zarządu                         |
+
+Struktura obiektu beneficjenta:
+
+| Parametr                   | Wymagane | Opis                                                                        |
+| -------------------------- | -------- | --------------------------------------------------------------------------- |
+| **type**                   | TAK      | Typ podmiotu. Aktualnie wspierane: individual                               |
+| **firstName**              | NIE      | Imię beneficjenta                                                           |
+| **lastName**               | NIE      | Nazwisko beneficjenta                                                       |
+| **personalIdentityNumber** | TAK      | Numer PESEL beneficjenta (w przypadku braku numeru pesel wymagany jest
+parametr personalIdentifier)            |
+| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
+| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
+| **personalIdentifier**     | NIE      | Numer identifykacyjny beneficjenta (wymagany jeśli nie ma numeru pesel)     |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
+| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
+| **birthCity**              | NIE      | Miasto urodzenia                                                            |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
+| **references**             | NIE      | Referencje własne                                                           |
+| **politicallyExposed**     | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)              |
+| **ownedShares**            | TAK      | Liczba posiadanych udziałów (%)                                             |
+| **description**            | NIE      | Opis beneficjenta                                                           |
+
+Struktura obiektu członka zarządu:
+
+| Parametr                   | Wymagane | Opis                                                                        |
+| -------------------------- | -------- | --------------------------------------------------------------------------- |
+| **type**                   | TAK      | Typ podmiotu. Aktualnie wspierane: individual                               |
+| **firstName**              | NIE      | Imię członka zarządu                                                        |
+| **lastName**               | NIE      | Nazwisko członka zarządu                                                    |
+| **personalIdentityNumber** | TAK      | Numer PESEL członka zarządu (w przypadku braku numeru pesel wymagany jest
+parametr personalIdentifier)            |
+| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
+| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
+| **personalIdentifier**     | NIE      | Numer identifykacyjny członka zarządu (wymagany jeśli nie ma numeru pesel)  |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
+| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
+| **birthCity**              | NIE      | Miasto urodzenia                                                            |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
+| **references**             | NIE      | Referencje własne                                                           |
+| **politicallyExposed**     | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)              |
+| **description**            | NIE      | Opis członka zarządu                                                        |
 
 Do każdego z typów podmiotu można dodać dane kontaktowe.
 
@@ -297,14 +344,131 @@ a) kontakt:
 ```json
 {
   "type": "company",
+  "firstName": "",
+  "lastName": "",
+  "personalIdentityNumber": "",
+  "documentType": "",
+  "documentNumber": "",
+  "documentExpirationDate": null,
+  "citizenship": "",
+  "birthCity": "",
+  "birthCountry": "",
+  "politicallyExposed": false,
+  "withoutExpirationDate": false,
+  "birthDate": "",
   "companyName": "FiberPay",
   "taxIdNumber": "7010634566",
-  "nationalBusinessRegistryNumber": "365899489",
+  "nationalBusinessRegistryNumber": "147302566",
   "tradeName": "FiberPay",
-  "nationalCourtRegistryNumber": "1234567890",
-  "businessActivityForm": "limited_liability_company",
-  "industry": "usługi programistyczne",
-  "servicesDescription": "tworzenie aplikacji webowych"
+  "nationalCourtRegistryNumber": "0000512707",
+  "businessActivityForm": "stock_company",
+  "servicesDescription": "",
+  "website": "fiberpay.pl",
+  "registrationCountry": "",
+  "companyIdentifier": "",
+  "references": "qwerty",
+  "createdByName": "",
+  "status": "appended",
+  "businessAddress": {
+    "country": "PL",
+    "city": "Warszawa",
+    "street": "Grzybowska",
+    "houseNumber": "4",
+    "flatNumber": "106",
+    "postalCode": "00-131",
+  },
+  "companyContact": {
+    "emailAdress": "info@fiberpay.pl",
+    "phoneCountry": "48",
+    "phoneNumber": "123123123",
+  },
+  "mainPkdCode": {
+    "pkdCode": "64.99.Z",
+    "pkdName":
+      "POZOSTAŁA FINANSOWA DZIAŁALNOŚĆ USŁUGOWA, GDZIE INDZIEJ NIESKLASYFIKOWANA, Z WYŁĄCZENIEM UBEZPIECZEŃ I FUNDUSZÓW EMERYTALNYCH",
+  },
+  "pkdCodes": [
+    {
+      "pkdCode": "58.29.Z",
+      "pkdName": "DZIAŁALNOŚĆ WYDAWNICZA W ZAKRESIE POZOSTAŁEGO OPROGRAMOWANIA",
+    },
+    {
+      "pkdCode": "62.01.Z",
+      "pkdName": "DZIAŁALNOŚĆ ZWIĄZANA Z OPROGRAMOWANIEM",
+    },
+  ],
+  "beneficiaries": [
+    {
+      "type": "individual",
+      "firstName": "Jan",
+      "lastName": "Kowalski",
+      "personalIdentityNumber": "01234567890",
+      "documentType": "id_card",
+      "documentNumber": "aze123123",
+      "documentExpirationDate": null,
+      "citizenship": "PL",
+      "birthCity": "Warszawa",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "withoutExpirationDate": false,
+      "birthDate": null,
+      "ownedShares": "50",
+      "description": "",
+    },
+    {
+      "type": "individual",
+      "firstName": "Adam",
+      "lastName": "Nowak",
+      "personalIdentityNumber": "",
+      "documentType": "id_card",
+      "documentNumber": "aze123123",
+      "documentExpirationDate": null,
+      "citizenship": "PL",
+      "birthCity": "Warszawa",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "withoutExpirationDate": false,
+      "birthDate": "2001-01-01",
+      "description": "",
+      "ownedShares": "50",
+    },
+  ],
+  "boardMembers": [
+    {
+      "type": "individual",
+      "firstName": "Jan",
+      "lastName": "Kowalski",
+      "personalIdentityNumber": "01234567890",
+      "documentType": "id_card",
+      "documentNumber": "aze123123",
+      "documentExpirationDate": null,
+      "citizenship": "PL",
+      "birthCity": "Warszawa",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "withoutExpirationDate": false,
+      "birthDate": null,
+      "ownedShares": "50",
+      "description": "Prezes",
+    },
+    {
+      "type": "individual",
+      "firstName": "Adam",
+      "lastName": "Nowak",
+      "personalIdentityNumber": "",
+      "documentType": "id_card",
+      "documentNumber": "aze123123",
+      "documentExpirationDate": null,
+      "citizenship": "PL",
+      "birthCity": "Warszawa",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "withoutExpirationDate": false,
+      "birthDate": "2001-01-01",
+      "description": "Wiceprezes",
+    },
+  ],
+
 }
 ```
 
