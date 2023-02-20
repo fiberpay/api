@@ -70,45 +70,61 @@ W zależności od wybranego typu wymagane są następujące parametry:
 
 a) individual:
 
-| Parametr                   | Wymagane | Opis                                                                                                                    |
-| -------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **firstName**              | NIE      | Imie podmiotu                                                                                                           |
-| **lastName**               | NIE      | Nazwisko podmiotu                                                                                                       |
-| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)                         |
-| **personalIdentifier**     | NIE      | Numer identifykacyjny podmiotu (wymagany jeśli nie ma numeru pesel)                                                     |
-| **documentType**           | TAK      | Rodzaj dokumentu Aktualnie wspierane: id\_card, passport, residency\_card (nie jest wymagany jeśli nie ma numeru pesel) |
-| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                           |
-| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                                                               |
-| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                                                                    |
-| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                                                                |
-| **birthCity**              | NIE      | Miasto urodzenia                                                                                                        |
-| **birthCountry**           | NIE      | Kraj urodzenia                                                                                                          |
-| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                                                              |
+| Parametr                   | Wymagane | Opis                                                                        |
+| -------------------------- | -------- | --------------------------------------------------------------------------- |
+| **firstName**              | NIE      | Imie podmiotu                                                               |
+| **lastName**               | NIE      | Nazwisko podmiotu                                                           |
+| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest
+parametr personalIdentifier)            |
+| **personalIdentifier**     | NIE      | Numer identifykacyjny podmiotu (wymagany jeśli nie ma numeru pesel)         |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
+| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
+| **birthCity**              | NIE      | Miasto urodzenia                                                            |
+| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
+| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
+| **references**             | NIE      | Referencje własne                                                           |
+| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                  |
 
 b) sole\_proprietorship - wszystkie powyższe oraz:
 
-| Parametr                           | Wymagane | Opis                                                         |
-| ---------------------------------- | -------- | ------------------------------------------------------------ |
-| **companyName**                    | NIE      | Nazwa prowadzonej działalności                               |
-| **taxIdNumber**                    | TAK      | NIP prowadzonej działalności                                 |
-| **nationalBusinessRegistryNumber** | NIE      | Regon prowadzonej działalności                               |
-| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)      |
-| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP) |
+| Parametr                           | Wymagane | Opis                                                                |
+| ---------------------------------- | -------- | ------------------------------------------------------------        |
+| **taxIdNumber**                    | TAK      | NIP prowadzonej działalności                                        |
+| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (wymagany jeśli nie ma numeru NIP)        |
+| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)             |
+| **references**                     | NIE      | Referencje własne                                                   |
+| **nationalBusinessRegistryNumber** | NIE      | Regon prowadzonej działalności                                      |
+| **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP) |
+| **companyName**                    | NIE      | Nazwa prowadzonej działalności                                      |
+| **pkdCodes**                       | NIE      | Tablica z pozostałymi kodami PKD (tablica zawierająca obiekty jw.)  |
+
+Struktura obiektu z kodem PKD:
+
+| Parametr                 | Wymagane | Opis                                              |
+| ------------------------ | -------- | ------------------------------------------------- |
+| **pkdCode**              | TAK      | Numer kodu PKD w formacie (00.00.X)               |
+| **pkdName**              | TAK      | Opis kodu PKD                                     |
 
 c) company:
 
-| Parametr                           | Wymagane | Opis                                                                                                                                                                                                                                                                                                                      |
-| ---------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **companyName**                    | NIE      | Nazwa firmy                                                                                                                                                                                                                                                                                                               |
-| **taxIdNumber**                    | TAK      | Numer NIP                                                                                                                                                                                                                                                                                                                 |
-| **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                                                                                                                                                                                                                                                                               |
-| **tradeName**                      | NIE      | Nazwa handlowa firmy                                                                                                                                                                                                                                                                                                      |
-| **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                                                                                                                                                                                                                                                                                 |
-| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli nie ma numeru NIP). Aktualnie wspierane: limited\_liability\_company, civil\_partnership\_company, general\_partnership\_company, professional\_partnership\_company, limited\_partnership\_company, limited\_joint\_stock\_partnership\_company, stock\_company |
-| **industry**                       | NIE      | Branża                                                                                                                                                                                                                                                                                                                    |
-| **servicesDescription**            | NIE      | Opis usług                                                                                                                                                                                                                                                                                                                |
-| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)                                                                                                                                                                                                                                                                   |
-| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP)                                                                                                                                                                                                                                                              |
+| Parametr                           | Wymagane | Opis                                                                |
+| ---------------------------------- | -------- | ------------------------------------------------------------------- |
+| **companyName**                    | NIE      | Nazwa firmy                                                         |
+| **taxIdNumber**                    | TAK      | Numer NIP                                                           |
+| **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                         |
+| **tradeName**                      | NIE      | Nazwa handlowa firmy                                                |
+| **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                           |
+| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli
+nie ma numeru NIP). Aktualnie wspierane: limited\_liability\_company, civil\_partnership\_company,
+general\_partnership\_company, professional\_partnership\_company,
+limited\_partnership\_company, limited\_joint\_stock\_partnership\_company, stock\_company                            |
+| **industry**                       | NIE      | Branża                                                              |
+| **servicesDescription**            | NIE      | Opis usług                                                          |
+| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)             |
+| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP)        |
 
 Do każdego z typów podmiotu można dodać dane kontaktowe.
 
@@ -145,17 +161,36 @@ a) kontakt:
 
 ```json
 {
-  "type": "individual",
-  "firstName": "Jan",
-  "lastName": "Kowalski",
-  "personalIdentityNumber": "01234567880",
-  "documentType": "id_card",
-  "documentNumber": "AAA123456",
-  "documentExpirationDate": "2022-10-15",
-  "citizenship": "PL",
+  "beneficiaries": [],
   "birthCity": "Warszawa",
   "birthCountry": "PL",
+  "birthDate": "",
+  "boardMembers": [],
+  "businessActivityForm": "",
+  "citizenship": "PL",
+  "companyIdentifier": "",
+  "companyName": "",
+  "createdByName": "Wojtek",
+  "documentExpirationDate": "2025-05-15",
+  "documentNumber": "aze123123",
+  "documentType": "id_card",
+  "firstName": "Jan",
+  "industry": "",
+  "lastName": "Kowalski",
+  "nationalBusinessRegistryNumber": "",
+  "nationalCourtRegistryNumber": "",
+  "personalIdentityNumber": "01234567890",
+  "pkdCodes": [],
   "politicallyExposed": false,
+  "references": "qwerty",
+  "registrationCountry": "",
+  "servicesDescription": "",
+  "status": "appended",
+  "taxIdNumber": "",
+  "tradeName": "",
+  "type": "individual",
+  "website": "",
+  "withoutExpirationDate": false,
   "accommodationAddress": {
     "country": "PL",
     "city": "Warszawa",
@@ -163,7 +198,20 @@ a) kontakt:
     "houseNumber": "4",
     "flatNumber": "106",
     "postalCode": "00-131"
-  }
+  },
+  "forwardAddress": {
+    "country": "PL",
+    "city": "Warszawa",
+    "street": "Grzybowska",
+    "houseNumber": "4",
+    "flatNumber": "106",
+    "postalCode": "00-131"
+  },
+  "personalContact": {
+    "emailAdress": "info@fiberpay.com",
+    "phoneCountry": "48",
+    "phoneNumber": "123123123",
+  },
 }
 ```
 
@@ -171,20 +219,42 @@ a) kontakt:
 
 ```json
 {
-  "type": "sole_proprietorship",
-  "firstName": "Jan",
-  "lastName": "Kowalski",
-  "personalIdentityNumber": "01234567880",
-  "documentType": "id_card",
-  "documentNumber": "AAA123456",
-  "documentExpirationDate": "2022-10-15",
-  "citizenship": "PL",
+  "beneficiaries": [],
   "birthCity": "Warszawa",
   "birthCountry": "PL",
-  "politicallyExposed": false,
+  "birthDate": "",
+  "boardMembers": [],
+  "businessActivityForm": "",
+  "citizenship": "PL",
+  "companyIdentifier": "",
   "companyName": "Usługi programistyczne",
-  "taxIdNumber": "7010634566",
-  "nationalBusinessRegistryNumber": "365899489",
+  "createdByName": "Adam",
+  "documentExpirationDate": "2025-05-08",
+  "documentNumber": "aze123123",
+  "documentType": "passport",
+  "firstName": "Jan",
+  "lastName": "Kowalski",
+  "mainPkdCode": {
+    "pkdCode": "01.12.Z",
+    "pkdName": "Uprawa ryżu"
+  },
+  "personalIdentityNumber": "01234567880",
+  "pkdCodes": [
+    {
+      "pkdCode": "01.15.Z",
+      "pkdName": "Uprawa tytoniu"
+    }
+  ],
+  "politicallyExposed": false,
+  "references": "qwerty",
+  "registrationCountry": "",
+  "servicesDescription": "",
+  "status": "appended",
+  "taxIdNumber": "8365876546",
+  "tradeName": "",
+  "type": "sole_proprietorship",
+  "website": "",
+  "withoutExpirationDate": false,
   "forwardAddress": {
     "country": "PL",
     "city": "Warszawa",
