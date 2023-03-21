@@ -51,6 +51,15 @@ Każde żądanie do API powinno posiadać następujące nagłówki:
 * X-API-Key – wygenerowany klucz jawny
 * X-API-Signature – podpis z użyciem skrótu **sha512** stworzonego przy użyciu _**‘route’**_, _**‘nonce’**_, _**‘apiKey’**_, _**‘requestBody’**_ i _**‘secretKey’**_
 
+#### Instrukcja utworzenia X-API-Nonce
+
+Jest to wartość w postaci liczby naturalnej, która jest zapisywana przy każdym żądaniu API. Każde kolejne żądanie API powinno posiadać wartość nonce, które będzie większe od poprzednio zapisanego. 
+Nonce przypisane jest do własnego klucza API, więc w przypadku wykorzystywania większej ilości systemów, warto utworzyć klucz API dla każdej instancji. 
+Dobrym przykładem nonce jest wartość timestampa aktualnego czasu, który powinien z każdym kolejnym żądaniem być wartością większą od poprzedniej.
+
+Przykład:
+Wykonując żądanie API do systemu z ustawionym nagłówkiem **X-API-Nonce** = 1, następne żądanie API do systemu powinno mieć nagłowek **X-API-Nonce** większy od 1 np. **X-API-Nonce** = 2. I dalej kolejne żądanie powinno mieć nagłowek większy od poprzedniego, czyli **X-API-Nonce** > 2.
+
 #### Instrukcja utworzenia X-API-Signature
 
 Należy utworzyć połączony ciąg znaków (concatenated string) składający się z route, nonce, apiKey oraz requestBody (kolejność ma znaczenie!).
@@ -70,8 +79,78 @@ hash_hmac(‘sha512’, $implodeParams, $secretKey)
 
 FiberPay posiada mechanizm tzw. callbacków. Po aktualizacji zlecenia system FiberPay może wywołać żądanie HTTP na wskazany uprzednio adres, gdzie:
 
-* w ciele (body) żądania będzie zawarty token JWT z aktualnymi danymi zlecenia,
-* w nagłówku (header) żądania będzie zawarty jawny klucz API, wskazujacy który klucz tajny został wykorzystany do utworzenia JWT
+* w ciele (body) żądania będzie zawarty **token JWT** z aktualnymi danymi zlecenia,
+* w nagłówku API-Key(header) żądania będzie zawarty jawny klucz API, wskazujacy który **klucz tajny** został wykorzystany do utworzenia JWT.
+
+**Token JWT** należy odkodować używając algorytmu **HS256** oraz **klucza tajnego**. 
+Jeśli sygnatura tokenu zgadza się po odszyfrowaniu, to znaczy, że dane są prawdziwe i zostały wysłane przez FiberPay.
+
+#### Przykładowy token JWT:
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7Im9yZGVySXRlbSI6eyJkYXRhIjp7ImNvZGUiOiJmdGU1bnljcSIsInN0YXR1cyI6InJlY2VpdmVkIiwidHlwZSI6ImNvbGxlY3RfaXRlbSIsImN1cnJlbmN5IjoiUExOIiwiYW1vdW50IjoiMTAwLjAwIiwiZmVlcyI6W10sInRvTmFtZSI6IkphbiBLb3dhbHNraSIsInBhcmVudENvZGUiOiJkejh5bjdncWZwcjYiLCJkZXNjcmlwdGlvbiI6IlNhbGFyeSBwYXltZW50IiwibWV0YWRhdGEiOm51bGwsImNyZWF0ZWRBdCI6IjIwMjEtMDUtMTEgMTI6MjU6MzIiLCJ1cGRhdGVkQXQiOiIyMDIxLTA1LTExIDEyOjI2OjAyIiwicmVkaXJlY3QiOiJodHRwczpcL1wvdGVzdC5maWJlcnBheS5wbFwvb3JkZXJcL2Z0ZTVueWNxIn0sImludm9pY2UiOnsiYW1vdW50IjoiMTAwLjAwIiwiY3VycmVuY3kiOiJQTE4iLCJpYmFuIjoiUEwxOTE5NDAxMDc2MzIwMjgwMTAwMDAyVEVTVCIsImJiYW4iOiIxOTE5NDAxMDc2MzIwMjgwMTAwMDAyVEVTVCIsImRlc2NyaXB0aW9uIjoiZnRlNW55Y3EifSwibGlua3MiOnsicmVsIjoic2VsZiIsImhyZWYiOiJodHRwczpcL1wvYXBpdGVzdC5maWJlcnBheS5wbFwvMS4wXC9vcmRlcnNcL2NvbGxlY3RcL2l0ZW1cL2Z0ZTVueWNxIn19LCJ0cmFuc2FjdGlvbiI6eyJkYXRhIjp7ImNvbnRyYWN0b3JOYW1lIjoiVEVTVCIsImNvbnRyYWN0b3JJYmFuIjoiUEwxMjM0MDAwMFRFU1QiLCJhbW91bnQiOiIxMDAuMDAiLCJjdXJyZW5jeSI6IlBMTiIsImRlc2NyaXB0aW9uIjoiZnRlNW55Y3EiLCJiYW5rUmVmZXJlbmNlQ29kZSI6ImZ0ZTVueWNxIiwib3BlcmF0aW9uQ29kZSI6ImZ0ZTVueWNxIiwiYWNjb3VudEliYW4iOiJQTDE5MTk0MDEwNzYzMjAyODAxMDAwMDJURVNUIiwiYm9va2VkQXQiOiIyMDIxLTA1LTExIDEyOjI1OjUwIiwiY3JlYXRlZEF0IjoiMjAyMS0wNS0xMSAxMjoyNTo1MCIsInVwZGF0ZWRBdCI6IjIwMjEtMDUtMTEgMTI6MjY6MDIifSwidHlwZSI6ImJhbmtUcmFuc2FjdGlvbiJ9LCJ0eXBlIjoiY29sbGVjdF9vcmRlcl9pdGVtX3JlY2VpdmVkIiwiY3VzdG9tUGFyYW1zIjpudWxsfSwiaXNzIjoiRmliZXJwYXkiLCJpYXQiOjE2MjA3ODYzNjJ9.cQgcBYDF13P64WOLBT9slzxEoC-7ln_9iIDoSVVONr0
+```
+#### Po odszyfrowaniu:
+
+```json
+{
+  "payload": {
+    "orderItem": {
+      "data": {
+        "code": "2c36wknyq7uz",
+        "status": "completed",
+        "type": "direct",
+        "description": "Salary payment",
+        "currency": "PLN",
+        "amount": "100.0000",
+        "fees": [
+          {
+            "amount": "0.50",
+            "currency": "PLN",
+            "type": "subtraction"
+          }
+        ],
+        "feeAmountSum": "0.50",
+        "toName": "Michał",
+        "toIban": "PL27114020040000300201355387",
+        "redirect": "http://localhost:3000/order/2c36wknyq7uz",
+        "metadata": null,
+        "createdAt": "2022-12-27 12:21:37",
+        "updatedAt": "2022-12-27 12:24:07"
+      },
+      "invoice": {
+        "code": "b74nm6ckq",
+        "amount": "100.00",
+        "currency": "PLN",
+        "createdAt": "2022-12-27 12:21:37",
+        "updatedAt": "2022-12-27 12:23:15"
+      },
+      "links": {
+        "rel": "self",
+        "href": "https://3d51-89-64-64-11.eu.ngrok.io/1.0/orders/direct/2c36wknyq7uz"
+      }
+    },
+    "transaction": {
+      "data": {
+        "contractorName": "Michał",
+        "contractorIban": "PL27114020040000300201355387",
+        "amount": "-99.50",
+        "currency": "PLN",
+        "description": "5jucvt6d Salary payment",
+        "bankReferenceCode": "fyv7qx89b5j2",
+        "operationCode": "fyv7qx89b5j2",
+        "accountIban": "PL123400007",
+        "bookedAt": "2022-12-27 12:23:59",
+        "createdAt": "2022-12-27 12:23:59",
+        "updatedAt": "2022-12-27 12:24:07"
+      },
+      "type": "bankTransaction"
+    },
+    "type": "direct_order_sent"
+  },
+  "iss": "Fiberpay",
+  "iat": 1679401850
+}
+```
 
 Informacje jak odkodować lub jakich bibliotek użyć do obsługi tokenu JWT znajdziesz pod adresem: [https://jwt.io/](https://jwt.io/)
 
@@ -670,7 +749,7 @@ Usługa pozwalająca na przyjęcie jednej lub więcej wpłat od płatników (lub
 
 #### POST /orders/collect
 
-Tworzy zlecenie
+Tworzy zlecenie, które zbiera wpłaty na konto podane w body żądania API.
 
 | Parametr     | Wymagane | Opis                                                      |
 | ------------ | -------- | --------------------------------------------------------- |
@@ -703,7 +782,9 @@ Przykładowa odpowiedź:
 
 #### POST /orders/collect/item
 
-Tworzy pojedynczy przelew do wysłania w ramach całego zlecenia.
+Tworzy pojedyncze zlecenie wpłaty środków za pomocą przelewu. 
+Środki przelane w ramach tego zlecenia trafiają później w agregacji dziennej na konto odbiorcy klienta podane w zleceniu nadrzędnym collect.
+W przypadku podania **callbackUrl** w ciele żądania, system wyśle na podany URL informacje o przeprowadzonej wpłacie, gdy taka nastąpi.
 
 | Parametr           | Wymagane | Opis                                                                   |
 | ------------------ | -------- | ---------------------------------------------------------------------- |
@@ -951,6 +1032,1030 @@ Przykładowa odpowiedź serwera:
         "rel": "self",
         "href": "https://apitest.fiberpay.pl/1.0/orders/forward/xbwucsgfn5pa"
     }
+}
+```
+
+## Extended order
+
+Jest to rozszerzenie zlecenia typu collect_item, które posiada dodatkowe możliwości związane z terminem opłacenia zlecenia. 
+Dodatkowe ustawienia:
+- Ustawienie terminu możliwości opłacenia zlecenia.
+
+Opcjonalnie: 
+- Podanie danych osoby, która opłaca zlecenie.
+- Dodanie systemu przypomnień mailowych.
+- Utworzenie płatności cyklicznej.
+- Dodanie tagu.
+
+### Extended Order
+
+#### POST /orders/collect/item/{code}/upgrade
+
+Rozszerzenie istniejącego zlecenia collect do wersji extended.
+
+| Parametr          | Wymagane  | Opis              |
+| --------          | --------  | -----------       |
+| **code**          | tak       | Kod podmiotu zlecenia collect |
+| **term**          | tak       | Opis zlecenia     |
+| **description**   | nie       | Własny opis       |
+| **renewal**       | nie       | Zlecenie cykliczne|
+
+Parametry obiektu zlecenia cyklicznego.
+
+| Parametr              | Wymagane      | Opis              | Możliwości    |
+| --------              | --------      | -----------       | ----------    |
+| **startsAt**          | tak           | Data startu       |               |
+| **intervalAmount**    | tak           | Okres powtórzeń   |               |
+| **intervalType**      | tak           | Typ powtórzeń     |day,week,month |
+| **endType**           | tak           | Typ zakończenia   |count,date,none|
+| **ordersCountLimit**  | endType=count | Limit powtórzeń   |               |
+| **endsAt**            | endType=date  | Data zakończenia  |               |
+```json
+{
+    "data": {
+        "code": "jntxvp5z",
+        "status": "open",
+        "amount": "100.00",
+        "currency": "PLN",
+        "fees": [
+            {
+                "amount": "2.00",
+                "currency": "PLN",
+                "type": "addition"
+            }
+        ],
+        "totalFeeAmount": "2.00",
+        "receiverAmount": "100.00",
+        "description": "Salary payment",
+        "title": "Salary payment",
+        "term": "2023-02-10",
+        "paymentUrl": "https://pay.fiberpay.pl/order/jntxvp5z",
+        "toName": "Marian Nowak",
+        "createdAt": "2023-01-31"
+    },
+    "partnerAccount": "PL89124031741111001032180939",
+    "debtor": null,
+    "notificationsPlan": null,
+    "orderRenewal": null,
+    "tags": []
+}
+```
+
+#### GET /orders/extended
+
+Pobranie informacji o zleceniach typu extended
+
+```javascript
+{
+    "data": [
+        {
+            "data": {
+                "code": "8tcsx36e",
+                "status": "received",
+                "amount": "100.00",
+                "currency": "PLN",
+                "fees": [
+                    {
+                        "amount": "2.00",
+                        "currency": "PLN",
+                        "type": "subtraction"
+                    }
+                ],
+                "totalFeeAmount": "2.00",
+                "receiverAmount": "98.00",
+                "description": "test",
+                "title": "test",
+                "term": "2023-01-30",
+                "paymentUrl": "https://pay.fiberpay.pl/order/8tcsx36e",
+                "toName": "Marian Nowak",
+                "createdAt": "2022-12-22"
+            },
+            "partnerAccount": "PL61109010140000071219812874",
+            "debtor": {
+                "code": "m6ht7ywqbksu",
+                "type": "unknown",
+                "email": "test@inpay.pl",
+                "phone_prefix": "+48",
+                "phone_number": "123123124",
+                "name": "Michal Kowalski",
+                "first_name": "Michal",
+                "last_name": "Kowalski",
+                "nip": null,
+                "fullNameAndEmail": "Michal Kowalski | test@inpay.pl"
+            },
+            "notificationsPlan": {
+                "status": "in_progress",
+                "type": "hades",
+                "completedAt": null,
+                "plan": []
+            },
+            "orderRenewal": null,
+            "tags": [
+                {
+                    "name": "Test",
+                    "color": "red"
+                }
+            ]
+        }
+    ]
+}
+```
+
+#### GET /orders/extended/{code}
+
+Pobranie informacji o pojedynczym zleceniu
+
+| Parametr  | Wymagane | Opis        |
+| --- 	| ---      | -----       |
+| **code**  | tak      | Kod zlecenia|
+
+```javascript
+{
+    "data": {
+        "code": "8tcsx36e",
+        "status": "received",
+        "amount": "100.00",
+        "currency": "PLN",
+        "fees": [
+            {
+                "amount": "2.00",
+                "currency": "PLN",
+                "type": "subtraction"
+            }
+        ],
+        "totalFeeAmount": "2.00",
+        "receiverAmount": "98.00",
+        "description": "test",
+        "title": "test",
+        "term": "2023-01-30",
+        "paymentUrl": "https://pay.fiberpay.pl/order/8tcsx36e",
+        "toName": "Marian Nowak",
+        "createdAt": "2022-12-22"
+    },
+    "partnerAccount": "PL61109010140000071219812874",
+    "debtor": {
+        "code": "m6ht7ywqbksu",
+        "type": "unknown",
+        "email": "test@inpay.pl",
+        "phone_prefix": "+48",
+        "phone_number": "123123124",
+        "name": "Michal Kowalski",
+        "first_name": "Michal",
+        "last_name": "Kowalski",
+        "nip": null,
+        "fullNameAndEmail": "Michal Kowalski | test@inpay.pl"
+    },
+    "notificationsPlan": {
+        "status": "in_progress",
+        "type": "hades",
+        "completedAt": null,
+        "plan": []
+    },
+    "orderRenewal": null,
+    "tags": [
+        {
+            "name": "Test",
+            "color": "red"
+        }
+    ]
+}
+```
+
+#### POST /orders/extended/{code}
+
+Utworzenie zlecenia typu extended. 
+Konto docelowe zlecenia to domyślnie ustawione konto użytkownika na stronie zapłatomat.pl.
+
+| Parametr          | Wymagane  | Opis              |
+| --------          | --------  | -----------       |
+| **code**          | tak       | Kod zlecenia      |
+| **amount**        | tak       | Kwota             |
+| **currency**      | tak       | Waluta            |
+| **title**         | tak       | Tytuł płatności   |
+| **term**          | tak       | Opis zlecenia     |
+| **description**   | nie       | Własny opis       |
+| **renewal**       | nie       | Zlecenie cykliczne|
+
+Parametry obiektu zlecenia cyklicznego
+
+| Parametr              | Wymagane      | Opis              | Możliwości    |
+| --------              | --------      | -----------       | ----------    |
+| **startsAt**          | tak           | Data startu       |               |
+| **intervalAmount**    | tak           | Okres powtórzeń   |               |
+| **intervalType**      | tak           | Typ powtórzeń     |day,week,month |
+| **endType**           | tak           | Typ zakończenia   |count,date,none|
+| **ordersCountLimit**  | endType=count | Limit powtórzeń   |               |
+| **endsAt**            | endType=date  | Data zakończenia  |               |
+
+```json
+{
+    "data": {
+        "code": "nub5rcyj",
+        "status": "open",
+        "amount": "100.00",
+        "currency": "PLN",
+        "fees": [
+            {
+                "amount": "2.00",
+                "currency": "PLN",
+                "type": "subtraction"
+            }
+        ],
+        "totalFeeAmount": "2.00",
+        "receiverAmount": "98.00",
+        "description": "description",
+        "title": "title",
+        "term": "2023-01-20",
+        "paymentUrl": "https://pay.fiberpay.pl/order/nub5rcyj",
+        "toName": "Marian Nowak",
+        "createdAt": "2023-02-08"
+    },
+    "partnerAccount": "PL61109010140000071219812874",
+    "debtor": null,
+    "notificationsPlan": null,
+    "orderRenewal": {
+        "code": "36wtcdafvkb2",
+        "status": "active",
+        "intervalAmount": 3,
+        "intervalType": "day",
+        "ordersCountLimit": 2,
+        "endsAt": null,
+        "startsAt": "2023-02-28",
+        "nextRenewalAt": "2023-02-28",
+        "updatedAt": "2023-02-08",
+        "createdAt": "2023-02-08"
+    },
+    "tags": []
+}
+```
+#### PUT /orders/extended/{code}
+
+Aktualizacja zlecenia typu extended. 
+
+| Parametr          | Wymagane  | Opis                           | Możliwości      |
+| --------          | --------  | -----------                    | ------          |
+| **code**          | tak       | Kod zlecenia                   |                 |
+| **description**   | nie       | Własny opis                    |                 |
+| **updateRenewed** | nie       | Aktualizacja zleceń cyklicznych| no,following,all|
+
+```json
+{
+    "data": {
+        "code": "nub5rcyj",
+        "status": "open",
+        "amount": "100.00",
+        "currency": "PLN",
+        "fees": [
+            {
+                "amount": "2.00",
+                "currency": "PLN",
+                "type": "subtraction"
+            }
+        ],
+        "totalFeeAmount": "2.00",
+        "receiverAmount": "98.00",
+        "description": "test2",
+        "title": "title",
+        "term": "2023-02-08",
+        "paymentUrl": "https://pay.fiberpay.pl/order/nub5rcyj",
+        "toName": "Marian Nowak",
+        "createdAt": "2023-02-08"
+    },
+    "partnerAccount": "PL61109010140000071219812874",
+    "debtor": null,
+    "notificationsPlan": null,
+    "orderRenewal": {
+        "code": "36wtcdafvkb2",
+        "status": "active",
+        "intervalAmount": 3,
+        "intervalType": "day",
+        "ordersCountLimit": 2,
+        "endsAt": null,
+        "startsAt": "2023-02-28",
+        "nextRenewalAt": "2023-02-28",
+        "updatedAt": "2023-02-08",
+        "createdAt": "2023-02-08"
+    },
+    "tags": []
+}
+```
+
+#### DELETE /orders/extended/{code}
+
+Usunięcie zlecenia typu extended.
+
+| Parametr  | Wymagane | Opis        |
+| --- 	| ---      | -----       |
+| **code**  | tak      | Kod zlecenia|
+```json
+{
+    "data": {
+        "code": "nub5rcyj",
+        "status": "cancelled",
+        "amount": "100.00",
+        "currency": "PLN",
+        "fees": [
+            {
+                "amount": "2.00",
+                "currency": "PLN",
+                "type": "subtraction"
+            }
+        ],
+        "totalFeeAmount": "2.00",
+        "receiverAmount": "98.00",
+        "description": "test2",
+        "title": "title",
+        "term": "2023-02-08",
+        "paymentUrl": "https://pay.fiberpay.pl/order/nub5rcyj",
+        "toName": "Marian Nowak",
+        "createdAt": "2023-02-08"
+    },
+    "partnerAccount": "PL61109010140000071219812874",
+    "debtor": null,
+    "notificationsPlan": null,
+    "orderRenewal": {
+        "code": "36wtcdafvkb2",
+        "status": "active",
+        "intervalAmount": 3,
+        "intervalType": "day",
+        "ordersCountLimit": 2,
+        "endsAt": null,
+        "startsAt": "2023-02-28",
+        "nextRenewalAt": "2023-02-28",
+        "updatedAt": "2023-02-08",
+        "createdAt": "2023-02-08"
+    },
+    "tags": []
+}
+```
+
+#### PATCH /orders/extended/{code}/debtor
+
+Aktualizacja płatnika dla zlecenia typu extended.
+
+| Parametr          | Wymagane  | Opis              |
+| --------          | --------  | -----------       |
+| **code**          | tak       | Kod zlecenia      |
+| **payerCode**     | tak       | Kod płatnika      |
+
+```json
+{
+    "data": {
+        "code": "nub5rcyj",
+        "status": "cancelled",
+        "amount": "100.00",
+        "currency": "PLN",
+        "fees": [
+            {
+                "amount": "2.00",
+                "currency": "PLN",
+                "type": "subtraction"
+            }
+        ],
+        "totalFeeAmount": "2.00",
+        "receiverAmount": "98.00",
+        "description": "test2",
+        "title": "title",
+        "term": "2023-02-08",
+        "paymentUrl": "https://pay.fiberpay.pl/order/nub5rcyj",
+        "toName": "Marian Nowak",
+        "createdAt": "2023-02-08"
+    },
+    "partnerAccount": "PL61109010140000071219812874",
+    "debtor": {
+        "code": "p6sy78g9f3rq",
+        "type": "unknown",
+        "email": "test@inpay.pl",
+        "phone_prefix": "+48",
+        "phone_number": "123123123",
+        "name": "MICHAŁ KOWALSKI",
+        "first_name": "MICHAŁ",
+        "last_name": "KOWALSKI",
+        "nip": null,
+        "fullNameAndEmail": "MICHAŁ KOWALSKI | test@inpay.pl"
+    },
+    "notificationsPlan": null,
+    "orderRenewal": {
+        "code": "36wtcdafvkb2",
+        "status": "active",
+        "intervalAmount": 3,
+        "intervalType": "day",
+        "ordersCountLimit": 2,
+        "endsAt": null,
+        "startsAt": "2023-02-28",
+        "nextRenewalAt": "2023-02-28",
+        "updatedAt": "2023-02-08",
+        "createdAt": "2023-02-08"
+    },
+    "tags": []
+}
+```
+
+#### PUT /orders/extended/{code}/tags
+
+Aktualizacja tagów dla zlecenia typu extended.
+
+| Parametr          | Wymagane  | Opis              |
+| --------          | --------  | -----------       |
+| **code**          | tak       | Kod zlecenia      |
+| **tags**          | tak       | Tablica tagów     |
+
+
+```json
+{
+    "data": {
+        "code": "nub5rcyj",
+        "status": "cancelled",
+        "amount": "100.00",
+        "currency": "PLN",
+        "fees": [
+            {
+                "amount": "2.00",
+                "currency": "PLN",
+                "type": "subtraction"
+            }
+        ],
+        "totalFeeAmount": "2.00",
+        "receiverAmount": "98.00",
+        "description": "test2",
+        "title": "title",
+        "term": "2023-02-08",
+        "paymentUrl": "https://pay.fiberpay.pl/order/nub5rcyj",
+        "toName": "Marian Nowak",
+        "createdAt": "2023-02-08"
+    },
+    "partnerAccount": "PL61109010140000071219812874",
+    "debtor": {
+        "code": "p6sy78g9f3rq",
+        "type": "unknown",
+        "email": "test@inpay.pl",
+        "phone_prefix": "+48",
+        "phone_number": "123123123",
+        "name": "MICHAŁ KOWALSKI",
+        "first_name": "MICHAŁ",
+        "last_name": "KOWALSKI",
+        "nip": null,
+        "fullNameAndEmail": "MICHAŁ KOWALSKI | test@inpay.pl"
+    },
+    "notificationsPlan": null,
+    "orderRenewal": {
+        "code": "36wtcdafvkb2",
+        "status": "active",
+        "intervalAmount": 3,
+        "intervalType": "day",
+        "ordersCountLimit": 2,
+        "endsAt": null,
+        "startsAt": "2023-02-28",
+        "nextRenewalAt": "2023-02-28",
+        "updatedAt": "2023-02-08",
+        "createdAt": "2023-02-08"
+    },
+    "tags": [
+        {
+            "name": "Test3",
+            "color": "red"
+        }
+    ]
+}
+```
+
+
+#### GET /orders/extended/{code}/plan
+
+Pobranie propozycji planu dla zlecenia.
+
+| Parametr  | Wymagane | Opis        |
+| --- 	| ---      | -----       |
+| **code**  | tak      | Kod zlecenia|
+
+```json
+{
+    "data": {
+        "ab_hds_04": {
+            "message": "Przypomnienie w dniu płatności",
+            "value": 0,
+            "type": "notification",
+            "severity": "midHigh",
+            "enabled": true
+        },
+        "ab_hds_05": {
+            "message": "Wezwanie do zapłaty (3 dni po terminie)",
+            "value": -3,
+            "type": "summons",
+            "severity": "high",
+            "enabled": true
+        }
+    }
+}
+```
+
+#### POST /orders/extended/{code}/plan
+
+Dodanie planu dla zlecenia.
+
+| Parametr          | Wymagane  | Opis              |
+| --------          | --------  | -----------       |
+| **code**          | tak       | Kod zlecenia      |
+| **plan**          | tak       | Tablica planu     |
+
+```json
+{
+    "data": {
+        "code": "8tcsx36e",
+        "status": "received",
+        "amount": "100.00",
+        "currency": "PLN",
+        "fees": [
+            {
+                "amount": "2.00",
+                "currency": "PLN",
+                "type": "subtraction"
+            }
+        ],
+        "totalFeeAmount": "2.00",
+        "receiverAmount": "98.00",
+        "description": "test",
+        "title": "test",
+        "term": "2023-01-30",
+        "paymentUrl": "https://pay.fiberpay.pl/order/8tcsx36e",
+        "toName": "Marian Nowak",
+        "createdAt": "2022-12-22"
+    },
+    "partnerAccount": "PL61109010140000071219812874",
+    "debtor": {
+        "code": "m6ht7ywqbksu",
+        "type": "unknown",
+        "email": "konrad.ogniewski@inpay.pl",
+        "phone_prefix": "+48",
+        "phone_number": "123123124",
+        "name": "TEN",
+        "first_name": "MICHAŁ",
+        "last_name": "KOWALSKI",
+        "nip": null,
+        "fullNameAndEmail": "MICHAŁ KOWALSKI| test@inpay.pl"
+    },
+    "notificationsPlan": {
+        "status": "in_progress",
+        "type": "hades",
+        "completedAt": null,
+        "plan": []
+    },
+    "orderRenewal": null,
+    "tags": [
+        {
+            "name": "Test3",
+            "color": "red"
+        }
+    ]
+}
+```
+
+#### GET /orders/extended/{code}/history
+
+Pobranie historii zlecenia.
+| Parametr  | Wymagane | Opis        |
+| --- 	| ---      | -----       |
+| **code**  | tak      | Kod zlecenia|
+```json
+{
+    "data": [
+        {
+            "code": "nrpzk2chefdt",
+            "message": "Zlecenie #nub5rcyj zostało anulowane.",
+            "type": "order_cancelled",
+            "params": {
+                "orderCode": "nub5rcyj"
+            },
+            "createdAt": "2023-02-08 15:04"
+        },
+        {
+            "code": "rxzs9tj672f4",
+            "message": "Zlecenie #nub5rcyj zostało utworzone. Termin płatności - 2023-01-20",
+            "type": "order_created",
+            "params": {
+                "orderCode": "nub5rcyj",
+                "amount": 100,
+                "currency": "PLN",
+                "paymentDeadline": "2023-01-20"
+            },
+            "createdAt": "2023-02-08 14:57"
+        }
+    ],
+}
+```
+
+### Payers
+
+Ścieżki dotyczące informacji o płatniku.
+
+#### GET /payers
+
+Pobranie listy zapisanych płatników.
+
+```json
+{
+    "data": [
+        {
+            "code": "p6sy78g9f3rq",
+            "type": "unknown",
+            "email": "test@inpay.pl",
+            "firstName": "MICHAŁ",
+            "lastName": "KOWALSKI",
+            "name": "MICHAŁ KOWALSKI",
+            "phonePrefix": "+48",
+            "phoneNumber": "123123123",
+            "nip": null,
+            "createdAt": "2023-02-08 15:12:30",
+            "updatedAt": "2023-02-08 15:12:30"
+        }
+    ]
+}
+```
+
+#### GET /payers/{code}
+
+| Parametr          | Wymagane  | Opis              |
+| --------          | --------  | -----------       |
+| **code**          | tak       | Kod płatnika      |
+
+```json
+{
+    "data": {
+        "code": "p6sy78g9f3rq",
+        "type": null,
+        "email": "test@inpay.pl",
+        "firstName": "MICHAŁ",
+        "lastName": "KOWALSKI",
+        "name": "MICHAŁ KOWALSKI",
+        "phonePrefix": "+48",
+        "phoneNumber": "123123123",
+        "nip": null,
+        "createdAt": "2023-02-08 15:12:30",
+        "updatedAt": "2023-02-08 15:12:30"
+    }
+}
+```
+
+#### POST /payers
+
+Utworzenie płatnika.
+
+| Parametr              | Wymagane      | Opis              | Możliwości                |
+| --------              | --------      | -----------       | ----------                |
+| **email**             | tak           | Email             |                           |
+| **phoneNumber**       | nie           | Numer telefonu    |                           |
+| **phonePrefix**       | nie           | Prefix numeru     |                           |
+| **firstName**         | nie           | Typ zakończenia   |                           |
+| **lastName**          | nie           | Typ zakończenia   |                           |
+| **name**              | nie           | Typ zakończenia   |                           |
+| **type**              | nie           | Limit powtórzeń   |unknown,company,personal   |
+
+```json
+{
+    "data": {
+        "code": "p6sy78g9f3rq",
+        "type": null,
+        "email": "test@inpay.pl",
+        "firstName": "MICHAŁ",
+        "lastName": "KOWALSKI",
+        "name": "MICHAŁ KOWALSKI",
+        "phonePrefix": "+48",
+        "phoneNumber": "123123123",
+        "nip": null,
+        "createdAt": "2023-02-08 15:12:30",
+        "updatedAt": "2023-02-08 15:12:30"
+    }
+}
+```
+
+#### PUT /payers/{code}
+
+Aktualizacja danych płatnika.
+
+
+| Parametr              | Wymagane      | Opis              | Możliwości                |
+| --------              | --------      | -----------       | ----------                |
+| **code**              | tak           | Kod płatnika      |                           |
+| **email**             | tak           | Email             |                           |
+| **phoneNumber**       | nie           | Numer telefonu    |                           |
+| **phonePrefix**       | nie           | Prefix numeru     |                           |
+| **firstName**         | nie           | Typ zakończenia   |                           |
+| **lastName**          | nie           | Typ zakończenia   |                           |
+| **name**              | nie           | Typ zakończenia   |                           |
+| **type**              | nie           | Limit powtórzeń   |unknown,company,personal   |
+
+```json
+{
+    "data": {
+        "code": "p6sy78g9f3rq",
+        "type": null,
+        "email": "test@inpay.pl",
+        "firstName": "MICHAŁ",
+        "lastName": "KOWALSKI",
+        "name": "MICHAŁ KOWALSKI",
+        "phonePrefix": "+48",
+        "phoneNumber": "123123123",
+        "nip": null,
+        "createdAt": "2023-02-08 15:12:30",
+        "updatedAt": "2023-02-08 15:12:30"
+    }
+}
+```
+
+#### GET /payers/{code}/orders
+
+Pobranie zleceń przypisanych do danego płatnika.
+
+| Parametr  | Wymagane | Opis         |
+| --- 	| ---      | -----        |
+| **code**  | tak      | Kod płatnika |
+
+```json
+{
+    "data": [
+        {
+            "data": {
+                "code": "nub5rcyj",
+                "status": "cancelled",
+                "amount": "100.00",
+                "currency": "PLN",
+                "fees": [
+                    {
+                        "amount": "2.00",
+                        "currency": "PLN",
+                        "type": "subtraction"
+                    }
+                ],
+                "totalFeeAmount": "2.00",
+                "receiverAmount": "98.00",
+                "description": "test2",
+                "title": "title",
+                "term": "2023-02-08",
+                "paymentUrl": "https://pay.fiberpay.pl/order/nub5rcyj",
+                "toName": "Marian Nowak",
+                "createdAt": "2023-02-08"
+            },
+            "partnerAccount": "PL61109010140000071219812874",
+            "debtor": {
+                "code": "p6sy78g9f3rq",
+                "type": "unknown",
+                "email": "test@inpay.pl",
+                "phone_prefix": "+48",
+                "phone_number": "123123123",
+                "name": "MICHAŁ KOWALSKI",
+                "first_name": "MICHAŁ",
+                "last_name": "KOWALSKI",
+                "nip": null,
+                "fullNameAndEmail": "MICHAŁ KOWALSKI | test@inpay.pl"
+            },
+            "notificationsPlan": null,
+            "orderRenewal": {
+                "code": "36wtcdafvkb2",
+                "status": "active",
+                "intervalAmount": 3,
+                "intervalType": "day",
+                "ordersCountLimit": 2,
+                "endsAt": null,
+                "startsAt": "2023-02-28",
+                "nextRenewalAt": "2023-02-28",
+                "updatedAt": "2023-02-08",
+                "createdAt": "2023-02-08"
+            },
+            "tags": []
+        }
+    ],
+}
+```
+
+### Tags
+
+#### GET /tags
+
+Pobieranie wcześniej utworzonych tagów.
+
+```json
+[
+    {
+        "name": "Test",
+        "color": "red"
+    }
+]
+```
+
+#### GET /tags/{name}
+
+Pobieranie wcześniej utworzonego taga
+
+| Parametr  | Wymagane | Opis  |
+| --- 	| ---      | ----- |
+| **name**  | tak      | Nazwa |
+```json
+[
+    {
+        "name": "Test",
+        "color": "red"
+    }
+]
+```
+
+#### POST /tags
+
+Tworzenie tagów.
+
+| Parametr | Wymagane | Opis  | Możliwości            |
+| -------- | -------- | ----- | ----------            |
+| **name** | tak      | Nazwa |                       |
+| **color**| tak      | Kolor |Paleta bazowych kolorów|
+
+```json
+{
+    "name": "Test5",
+    "color": "grey"
+}
+```
+#### DELETE /tags/{name}
+
+Usuwanie tagu.
+
+| Parametr  | Wymagane | Opis  |
+| --- 	| ---      | ----- |
+| **name**  | tak      | Nazwa |
+```json
+{
+    "name": "Test5",
+    "color": "grey"
+}
+```
+### Order Renewal
+
+Zlecenia cykliczne.
+
+#### GET /order-renewals/{code}
+
+Pobranie zlecenia cyklicznego.
+
+| Parametr  | Wymagane | Opis                    |
+| --- 	| ---      | -----                   |
+| **code**  | tak      | Kod zlecenia cyklicznego|
+
+```json
+    "data": {
+        "code": "zgmt593xjp6d",
+        "status": "active",
+        "intervalAmount": 3,
+        "intervalType": "day",
+        "ordersCountLimit": 2,
+        "endsAt": null,
+        "startsAt": "2023-01-30",
+        "nextRenewalAt": "2023-02-02",
+        "updatedAt": "2023-01-31",
+        "createdAt": "2023-01-31"
+    }
+}
+```
+
+#### DELETE /order-renewals/{code}
+
+Anulowanie zlecenia cyklicznego.
+
+| Parametr  | Wymagane | Opis                    |
+| --- 	| ---      | -----                   |
+| **code**  | tak      | Kod zlecenia cyklicznego|
+
+```json
+    "data": {
+        "code": "zgmt593xjp6d",
+        "status": "active",
+        "intervalAmount": 3,
+        "intervalType": "day",
+        "ordersCountLimit": 2,
+        "endsAt": null,
+        "startsAt": "2023-01-30",
+        "nextRenewalAt": "2023-02-02",
+        "updatedAt": "2023-01-31",
+        "createdAt": "2023-01-31"
+    }
+}
+```
+
+#### GET /order-renewals/{code}/orders
+
+Pobranie zleceń dla zlecenia cyklicznego.
+
+| Parametr  | Wymagane | Opis                    |
+| --- 	| ---      | -----                   |
+| **code**  | tak      | Kod zlecenia cyklicznego|
+
+```json
+{
+    "data": [
+        {
+            "data": {
+                "code": "b8dszgjv",
+                "status": "open",
+                "amount": "100.00",
+                "currency": "PLN",
+                "fees": [
+                    {
+                        "amount": "2.00",
+                        "currency": "PLN",
+                        "type": "subtraction"
+                    }
+                ],
+                "totalFeeAmount": "2.00",
+                "receiverAmount": "98.00",
+                "description": "description",
+                "title": "title",
+                "term": "2023-01-31",
+                "paymentUrl": "https://pay.fiberpay.pl/order/b8dszgjv",
+                "toName": "Marian Nowak",
+                "createdAt": "2023-01-31"
+            },
+            "partnerAccount": "PL61109010140000071219812874",
+            "debtor": null,
+            "notificationsPlan": null,
+            "orderRenewal": {
+                "code": "zgmt593xjp6d",
+                "status": "active",
+                "intervalAmount": 3,
+                "intervalType": "day",
+                "ordersCountLimit": 2,
+                "endsAt": null,
+                "startsAt": "2023-01-30",
+                "nextRenewalAt": "2023-02-02",
+                "updatedAt": "2023-01-31",
+                "createdAt": "2023-01-31"
+            },
+            "tags": []
+        }
+    ]
+}
+```
+
+#### GET /order-renewals/{code}/orders
+
+Pobranie planu cyklu dla zlecenia cyklicznego.
+
+| Parametr  | Wymagane | Opis                    |
+| --- 	| ---      | -----                   |
+| **code**  | tak      | Kod zlecenia cyklicznego|
+
+```json
+{
+    "2023-02": [
+        {
+            "amount": "100.0000",
+            "currency": "PLN",
+            "title": "title",
+            "description": "description",
+            "term": "2023-02-01T23:00:00.000000Z",
+            "renewal_code": "zgmt593xjp6d",
+            "scheduled_at": "2023-02-01T23:00:00.000000Z",
+            "payer": null
+        }
+    ]
+}
+```
+
+#### GET /order-renewals/schedules
+
+Pobranie cykli dla wszystkich zleceń cyklicznych.
+
+```json
+{
+    "2023-02": [
+        {
+            "amount": "100.0000",
+            "currency": "PLN",
+            "title": "title",
+            "description": "description",
+            "term": "2023-02-01T23:00:00.000000Z",
+            "renewal_code": "zgmt593xjp6d",
+            "scheduled_at": "2023-02-01T23:00:00.000000Z",
+            "payer": null
+        },
+        {
+            "amount": "100.0000",
+            "currency": "PLN",
+            "title": "title",
+            "description": "test2",
+            "term": "2023-02-27T23:00:00.000000Z",
+            "renewal_code": "36wtcdafvkb2",
+            "scheduled_at": "2023-02-27T23:00:00.000000Z",
+            "payer": {
+                "code": "p6sy78g9f3rq",
+                "type": "unknown",
+                "email": "test@inpay.pl",
+                "phone_prefix": "+48",
+                "phone_number": "123123123",
+                "name": "MICHAŁ KOWALSKI",
+                "first_name": "MICHAŁ",
+                "last_name": "KOWALSKI",
+                "nip": null,
+                "fullNameAndEmail": "MICHAŁ KOWALSKI | test@inpay.pl"
+            }
+        }
+    ]
 }
 ```
 
