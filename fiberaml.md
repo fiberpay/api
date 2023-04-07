@@ -70,45 +70,107 @@ W zależności od wybranego typu wymagane są następujące parametry:
 
 a) individual:
 
-| Parametr                   | Wymagane | Opis                                                                                                                    |
-| -------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **firstName**              | NIE      | Imie podmiotu                                                                                                           |
-| **lastName**               | NIE      | Nazwisko podmiotu                                                                                                       |
-| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)                         |
-| **personalIdentifier**     | NIE      | Numer identifykacyjny podmiotu (wymagany jeśli nie ma numeru pesel)                                                     |
-| **documentType**           | TAK      | Rodzaj dokumentu Aktualnie wspierane: id\_card, passport, residency\_card (nie jest wymagany jeśli nie ma numeru pesel) |
-| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                           |
-| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                                                               |
-| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                                                                    |
-| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                                                                |
-| **birthCity**              | NIE      | Miasto urodzenia                                                                                                        |
-| **birthCountry**           | NIE      | Kraj urodzenia                                                                                                          |
-| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                                                              |
+| Parametr                   | Wymagane | Opis                                                                        |
+| -------------------------- | -------- | --------------------------------------------------------------------------- |
+| **firstName**              | NIE      | Imie podmiotu                                                               |
+| **lastName**               | NIE      | Nazwisko podmiotu                                                           |
+| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)            |
+| **personalIdentifier**     | NIE      | Numer identifykacyjny podmiotu (wymagany jeśli nie ma numeru pesel)         |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
+| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
+| **birthCity**              | NIE      | Miasto urodzenia                                                            |
+| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
+| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
+| **references**             | NIE      | Referencje własne                                                           |
+| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                  |
 
 b) sole\_proprietorship - wszystkie powyższe oraz:
 
-| Parametr                           | Wymagane | Opis                                                         |
-| ---------------------------------- | -------- | ------------------------------------------------------------ |
-| **companyName**                    | NIE      | Nazwa prowadzonej działalności                               |
-| **taxIdNumber**                    | TAK      | NIP prowadzonej działalności                                 |
-| **nationalBusinessRegistryNumber** | NIE      | Regon prowadzonej działalności                               |
-| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)      |
-| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP) |
+| Parametr                           | Wymagane | Opis                                                                |
+| ---------------------------------- | -------- | ------------------------------------------------------------        |
+| **taxIdNumber**                    | TAK      | NIP prowadzonej działalności                                        |
+| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (wymagany jeśli nie ma numeru NIP)        |
+| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)             |
+| **references**                     | NIE      | Referencje własne                                                   |
+| **nationalBusinessRegistryNumber** | NIE      | Regon prowadzonej działalności                                      |
+| **companyName**                    | NIE      | Nazwa prowadzonej działalności                                      |
+| **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP) |
+| **pkdCodes**                       | NIE      | Tablica z pozostałymi kodami PKD (tablica zawierająca obiekty jw.)  |
+
+Struktura obiektu z kodem PKD:
+
+| Parametr                 | Wymagane | Opis                                              |
+| ------------------------ | -------- | ------------------------------------------------- |
+| **pkdCode**              | TAK      | Numer kodu PKD w formacie (00.00.X)               |
+| **pkdName**              | TAK      | Opis kodu PKD                                     |
 
 c) company:
 
-| Parametr                           | Wymagane | Opis                                                                                                                                                                                                                                                                                                                      |
-| ---------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **companyName**                    | NIE      | Nazwa firmy                                                                                                                                                                                                                                                                                                               |
-| **taxIdNumber**                    | TAK      | Numer NIP                                                                                                                                                                                                                                                                                                                 |
-| **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                                                                                                                                                                                                                                                                               |
-| **tradeName**                      | NIE      | Nazwa handlowa firmy                                                                                                                                                                                                                                                                                                      |
-| **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                                                                                                                                                                                                                                                                                 |
-| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli nie ma numeru NIP). Aktualnie wspierane: limited\_liability\_company, civil\_partnership\_company, general\_partnership\_company, professional\_partnership\_company, limited\_partnership\_company, limited\_joint\_stock\_partnership\_company, stock\_company |
-| **industry**                       | NIE      | Branża                                                                                                                                                                                                                                                                                                                    |
-| **servicesDescription**            | NIE      | Opis usług                                                                                                                                                                                                                                                                                                                |
-| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)                                                                                                                                                                                                                                                                   |
-| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP)                                                                                                                                                                                                                                                              |
+| Parametr                           | Wymagane | Opis                                                                |
+| ---------------------------------- | -------- | ------------------------------------------------------------------- |
+| **taxIdNumber**                    | TAK      | Numer NIP                                                           |
+| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)             |
+| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP)        |
+| **companyName**                    | NIE      | Nazwa firmy                                                         |
+| **tradeName**                      | NIE      | Nazwa handlowa firmy                                                |
+| **references**                     | NIE      | Referencje własne                                                   |
+| **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                         |
+| **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                           |
+| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli nie ma numeru NIP). Aktualnie wspierane: limited\_liability\_company, civil\_partnership\_company, general\_partnership\_company, professional\_partnership\_company,limited\_partnership\_company, limited\_joint\_stock\_partnership\_company, stock\_company                            |
+| **website**                        | NIE      | Strona internetowa                                                  |
+| **servicesDescription**            | NIE      | Opis usług                                                          |
+| **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP) |
+| **pkdCodes**                       | NIE      | Tablica z pozostałymi kodami PKD (tablica zawierająca obiekty jw.)  |
+| **beneficiaries**                  | NIE      | Tablica obiektów z danymi beneficjentów                            |
+| **boardMembers**                   | NIE      | Tablica obiektów z danymi członków zarządu                         |
+
+Struktura obiektu beneficjenta:
+
+| Parametr                   | Wymagane | Opis                                                                        |
+| -------------------------- | -------- | --------------------------------------------------------------------------- |
+| **type**                   | TAK      | Typ podmiotu. Aktualnie wspierane: individual                               |
+| **firstName**              | NIE      | Imię beneficjenta                                                           |
+| **lastName**               | NIE      | Nazwisko beneficjenta                                                       |
+| **personalIdentityNumber** | TAK      | Numer PESEL beneficjenta (w przypadku braku numeru pesel wymagany jest
+parametr personalIdentifier)            |
+| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
+| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
+| **personalIdentifier**     | NIE      | Numer identifykacyjny beneficjenta (wymagany jeśli nie ma numeru pesel)     |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
+| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
+| **birthCity**              | NIE      | Miasto urodzenia                                                            |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
+| **references**             | NIE      | Referencje własne                                                           |
+| **politicallyExposed**     | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)              |
+| **ownedShares**            | TAK      | Liczba posiadanych udziałów (%)                                             |
+| **description**            | NIE      | Opis beneficjenta                                                           |
+
+Struktura obiektu członka zarządu:
+
+| Parametr                   | Wymagane | Opis                                                                        |
+| -------------------------- | -------- | --------------------------------------------------------------------------- |
+| **type**                   | TAK      | Typ podmiotu. Aktualnie wspierane: individual                               |
+| **firstName**              | NIE      | Imię członka zarządu                                                        |
+| **lastName**               | NIE      | Nazwisko członka zarządu                                                    |
+| **personalIdentityNumber** | TAK      | Numer PESEL członka zarządu (w przypadku braku numeru pesel wymagany jest
+parametr personalIdentifier)            |
+| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
+| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
+| **personalIdentifier**     | NIE      | Numer identifykacyjny członka zarządu (wymagany jeśli nie ma numeru pesel)  |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
+| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
+| **birthCity**              | NIE      | Miasto urodzenia                                                            |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
+| **references**             | NIE      | Referencje własne                                                           |
+| **politicallyExposed**     | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)              |
+| **description**            | NIE      | Opis członka zarządu                                                        |
 
 Do każdego z typów podmiotu można dodać dane kontaktowe.
 
@@ -145,17 +207,36 @@ a) kontakt:
 
 ```json
 {
-  "type": "individual",
-  "firstName": "Jan",
-  "lastName": "Kowalski",
-  "personalIdentityNumber": "01234567880",
-  "documentType": "id_card",
-  "documentNumber": "AAA123456",
-  "documentExpirationDate": "2022-10-15",
-  "citizenship": "PL",
+  "beneficiaries": [],
   "birthCity": "Warszawa",
   "birthCountry": "PL",
+  "birthDate": "",
+  "boardMembers": [],
+  "businessActivityForm": "",
+  "citizenship": "PL",
+  "companyIdentifier": "",
+  "companyName": "",
+  "createdByName": "Wojtek",
+  "documentExpirationDate": "2025-05-15",
+  "documentNumber": "aze123123",
+  "documentType": "id_card",
+  "firstName": "Jan",
+  "industry": "",
+  "lastName": "Kowalski",
+  "nationalBusinessRegistryNumber": "",
+  "nationalCourtRegistryNumber": "",
+  "personalIdentityNumber": "01234567890",
+  "pkdCodes": [],
   "politicallyExposed": false,
+  "references": "qwerty",
+  "registrationCountry": "",
+  "servicesDescription": "",
+  "status": "appended",
+  "taxIdNumber": "",
+  "tradeName": "",
+  "type": "individual",
+  "website": "",
+  "withoutExpirationDate": false,
   "accommodationAddress": {
     "country": "PL",
     "city": "Warszawa",
@@ -163,7 +244,20 @@ a) kontakt:
     "houseNumber": "4",
     "flatNumber": "106",
     "postalCode": "00-131"
-  }
+  },
+  "forwardAddress": {
+    "country": "PL",
+    "city": "Warszawa",
+    "street": "Grzybowska",
+    "houseNumber": "4",
+    "flatNumber": "106",
+    "postalCode": "00-131"
+  },
+  "personalContact": {
+    "emailAdress": "info@fiberpay.com",
+    "phoneCountry": "48",
+    "phoneNumber": "123123123",
+  },
 }
 ```
 
@@ -171,20 +265,42 @@ a) kontakt:
 
 ```json
 {
-  "type": "sole_proprietorship",
-  "firstName": "Jan",
-  "lastName": "Kowalski",
-  "personalIdentityNumber": "01234567880",
-  "documentType": "id_card",
-  "documentNumber": "AAA123456",
-  "documentExpirationDate": "2022-10-15",
-  "citizenship": "PL",
+  "beneficiaries": [],
   "birthCity": "Warszawa",
   "birthCountry": "PL",
-  "politicallyExposed": false,
+  "birthDate": "",
+  "boardMembers": [],
+  "businessActivityForm": "",
+  "citizenship": "PL",
+  "companyIdentifier": "",
   "companyName": "Usługi programistyczne",
-  "taxIdNumber": "7010634566",
-  "nationalBusinessRegistryNumber": "365899489",
+  "createdByName": "Adam",
+  "documentExpirationDate": "2025-05-08",
+  "documentNumber": "aze123123",
+  "documentType": "passport",
+  "firstName": "Jan",
+  "lastName": "Kowalski",
+  "mainPkdCode": {
+    "pkdCode": "01.12.Z",
+    "pkdName": "Uprawa ryżu"
+  },
+  "personalIdentityNumber": "01234567880",
+  "pkdCodes": [
+    {
+      "pkdCode": "01.15.Z",
+      "pkdName": "Uprawa tytoniu"
+    }
+  ],
+  "politicallyExposed": false,
+  "references": "qwerty",
+  "registrationCountry": "",
+  "servicesDescription": "",
+  "status": "appended",
+  "taxIdNumber": "8365876546",
+  "tradeName": "",
+  "type": "sole_proprietorship",
+  "website": "",
+  "withoutExpirationDate": false,
   "forwardAddress": {
     "country": "PL",
     "city": "Warszawa",
@@ -227,14 +343,131 @@ a) kontakt:
 ```json
 {
   "type": "company",
+  "firstName": "",
+  "lastName": "",
+  "personalIdentityNumber": "",
+  "documentType": "",
+  "documentNumber": "",
+  "documentExpirationDate": null,
+  "citizenship": "",
+  "birthCity": "",
+  "birthCountry": "",
+  "politicallyExposed": false,
+  "withoutExpirationDate": false,
+  "birthDate": "",
   "companyName": "FiberPay",
   "taxIdNumber": "7010634566",
-  "nationalBusinessRegistryNumber": "365899489",
+  "nationalBusinessRegistryNumber": "147302566",
   "tradeName": "FiberPay",
-  "nationalCourtRegistryNumber": "1234567890",
-  "businessActivityForm": "limited_liability_company",
-  "industry": "usługi programistyczne",
-  "servicesDescription": "tworzenie aplikacji webowych"
+  "nationalCourtRegistryNumber": "0000512707",
+  "businessActivityForm": "stock_company",
+  "servicesDescription": "",
+  "website": "fiberpay.pl",
+  "registrationCountry": "",
+  "companyIdentifier": "",
+  "references": "qwerty",
+  "createdByName": "",
+  "status": "appended",
+  "businessAddress": {
+    "country": "PL",
+    "city": "Warszawa",
+    "street": "Grzybowska",
+    "houseNumber": "4",
+    "flatNumber": "106",
+    "postalCode": "00-131",
+  },
+  "companyContact": {
+    "emailAdress": "info@fiberpay.pl",
+    "phoneCountry": "48",
+    "phoneNumber": "123123123",
+  },
+  "mainPkdCode": {
+    "pkdCode": "64.99.Z",
+    "pkdName":
+      "POZOSTAŁA FINANSOWA DZIAŁALNOŚĆ USŁUGOWA, GDZIE INDZIEJ NIESKLASYFIKOWANA, Z WYŁĄCZENIEM UBEZPIECZEŃ I FUNDUSZÓW EMERYTALNYCH",
+  },
+  "pkdCodes": [
+    {
+      "pkdCode": "58.29.Z",
+      "pkdName": "DZIAŁALNOŚĆ WYDAWNICZA W ZAKRESIE POZOSTAŁEGO OPROGRAMOWANIA",
+    },
+    {
+      "pkdCode": "62.01.Z",
+      "pkdName": "DZIAŁALNOŚĆ ZWIĄZANA Z OPROGRAMOWANIEM",
+    },
+  ],
+  "beneficiaries": [
+    {
+      "type": "individual",
+      "firstName": "Jan",
+      "lastName": "Kowalski",
+      "personalIdentityNumber": "01234567890",
+      "documentType": "id_card",
+      "documentNumber": "aze123123",
+      "documentExpirationDate": null,
+      "citizenship": "PL",
+      "birthCity": "Warszawa",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "withoutExpirationDate": false,
+      "birthDate": null,
+      "ownedShares": "50",
+      "description": "",
+    },
+    {
+      "type": "individual",
+      "firstName": "Adam",
+      "lastName": "Nowak",
+      "personalIdentityNumber": "",
+      "documentType": "id_card",
+      "documentNumber": "aze123123",
+      "documentExpirationDate": null,
+      "citizenship": "PL",
+      "birthCity": "Warszawa",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "withoutExpirationDate": false,
+      "birthDate": "2001-01-01",
+      "description": "",
+      "ownedShares": "50",
+    },
+  ],
+  "boardMembers": [
+    {
+      "type": "individual",
+      "firstName": "Jan",
+      "lastName": "Kowalski",
+      "personalIdentityNumber": "01234567890",
+      "documentType": "id_card",
+      "documentNumber": "aze123123",
+      "documentExpirationDate": null,
+      "citizenship": "PL",
+      "birthCity": "Warszawa",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "withoutExpirationDate": false,
+      "birthDate": null,
+      "ownedShares": "50",
+      "description": "Prezes",
+    },
+    {
+      "type": "individual",
+      "firstName": "Adam",
+      "lastName": "Nowak",
+      "personalIdentityNumber": "",
+      "documentType": "id_card",
+      "documentNumber": "aze123123",
+      "documentExpirationDate": null,
+      "citizenship": "PL",
+      "birthCity": "Warszawa",
+      "birthCountry": "PL",
+      "politicallyExposed": false,
+      "withoutExpirationDate": false,
+      "birthDate": "2001-01-01",
+      "description": "Wiceprezes",
+    },
+  ],
+
 }
 ```
 
@@ -714,6 +947,9 @@ W przypadku gdy podmiot nie posiada dodanych beneficjentów rzeczywistych zwraca
 
 Usunięcie beneficjenta rzeczywistego wskazanego kodem identyfikującym.
 
+### GET /parties/pdf/{code}
+
+Rozpoczyna pobieranie raportu pdf z podmiotu wskazanego kodem identyfikującym.
 ### DELETE /parties/{code}
 
 Usunięcie podmiotu wskazanego kodem identyfikującym.
@@ -896,6 +1132,10 @@ Pobranie szczegółów danej transakcji.
   }
 }
 ```
+
+### GET /transactions/pdf/{code}
+
+Rozpoczyna pobieranie raportu pdf z transakcji wskazanej kodem identyfikującym.
 
 ### DELETE /transactions/{code}
 
@@ -1246,16 +1486,143 @@ Utworzenie nowej subskrypcji. Parametry żądania:
 
 ```json
 {
-    "data": {
-        "code": "f6xuvsw5jgz4",
-        "type": "monthPlan",
-        "status": "waiting_for_payment",
-        "availableFrom": "2022-06-30T22:00:00.000000Z",
-        "availableTo": "2022-07-31T22:00:00.000000Z",
-        "redirect": "http://fiberpay.pl/"
-    }
+  "data": {
+      "code": "f6xuvsw5jgz4",
+      "type": "monthPlan",
+      "status": "waiting_for_payment",
+      "availableFrom": "2022-06-30T22:00:00.000000Z",
+      "availableTo": "2022-07-31T22:00:00.000000Z",
+      "redirect": "http://fiberpay.pl/"
+  }
 }
 ```
-## DELETE /subscriptions/{code}
+### DELETE /subscriptions/{code}
 
 Usunięcie subksrypcji wskazanej kodem identyfikującym. Subksrypcja może zostać usunięta tylko wtedy gdy nie jest jeszcze opłacona.
+
+### GET /google/info
+
+Zwraca informację na temat nawiązanego połączenia z dyskiem google.
+
+
+#### Przykładowa odpowiedź serwera:
+
+```json
+{
+  "data": {
+    "code":"2p9nr1uj7e8q",
+    "status":"connected",
+    "gdEmail":"fiberpay@info.pl",
+    "createdAt":"2022-09-26T09:13:47.000000Z"
+  }
+}
+```
+### GET /google/login
+
+Umożliwia nawiązanie połączenia z dyskiem google. Jeśli jest to pierwsze nawiązywanie połączenia ścieżka zwraca url, który przekieruje na stronę logowania. Jest to wymagane w celu zapisywania załączników na dysku google klienta.
+
+### POST /google/auth
+
+Po udanym zalogowaniu google zwraca informację o kodzie użytkownika. Ten kod musi zostać przekazany w body tego żądania. Dzięki temu, system aml będzie mógł utworzyć token dostępu do dysku google.
+
+#### Przykładowe dane do utworzenia tokenu dostępu:
+
+```json
+{
+  "code": "4/0XXXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXX-vXXX",
+}
+```
+### GET /google/logout
+
+Usunięcie powiązania z dyskiem google. Wylogowanie systemu aml z dysku google klienta. Nie powoduje usunięcia załączników z dysku google.
+
+### GET /transactions/{code}/attachments
+
+Zwraca listę załączników powiązanych z transakcją wskazaną kodem identyfikującym.
+
+#### Przykładowa odpowiedź serwera:
+
+```json
+{
+  "data":[
+    {
+      "name":"fiberpay-logo.jpeg",
+      "id":"1oNeDxA4mD4d1SXeCyYvZeSwSAGdoOqJp",
+      "mimeType":"image\/jpeg",
+      "createdTime":"2022-09-07T12:27:32.597Z",
+      "size":"4242795"
+    },
+    {
+      "name":"bilet.pdf",
+      "id":"1doMeLr9Boe2abByDzswLS7z_aEvBG6Dm",
+      "mimeType":"application\/pdf",
+      "createdTime":"2022-09-06T14:37:31.284Z",
+      "size":"112852"
+    }
+  ]
+}
+```
+
+### GET /transactions/{code}/attachments
+
+Zwraca listę załączników powiązanych z podmiotem wskazanym kodem identyfikującym.
+
+#### Przykładowa odpowiedź serwera:
+
+```json
+{
+  "data":[
+    {
+      "name":"fiberpay-logo.jpeg",
+      "id":"1oNeDxA4mD4d1SXeCyYvZeSwSAGdoOqJp",
+      "mimeType":"image\/jpeg",
+      "createdTime":"2022-09-07T12:27:32.597Z",
+      "size":"4242795"
+    },
+    {
+      "name":"bilet.pdf",
+      "id":"1doMeLr9Boe2abByDzswLS7z_aEvBG6Dm",
+      "mimeType":"application\/pdf",
+      "createdTime":"2022-09-06T14:37:31.284Z",
+      "size":"112852"
+    }
+  ]
+}
+```
+
+### GET /attachments/{gdId}
+
+Rozpoczyna pobieranie załącznika wskazanego numerem identyfikacyjnym z dysku google.
+### DELETE /attachments/{gdId}
+
+Usuwa załącznik wskazany numerem identyfikacyjnym z dysku google.
+
+### POST /transactions/attachments/{code}
+
+Dodaje załącznik do transakcji wskazanej kodem identyfikującym. Załącznik zostanie zapisany na dysku google. Autoryzacyjny token jwt powinien posiadać sygnaturę na podstawie klucza tajnego. Treść tokenu może być pusta.
+
+Wymagane nagłówki:
+ ```json
+ {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": "Bearer autoryzacyjny.token.jwt"
+ }
+ ```
+
+ Do tak utworzonego żądania należy załączyć w body plik, który będzie załącznikiem dodanym do dysku google.
+
+### POST /parties/attachments/{code}
+
+Dodaje załącznik do podmiotu wskazanego kodem identyfikującym. Załącznik zostanie zapisany na dysku google. Autoryzacyjny token jwt powinien posiadać sygnaturę na podstawie klucza tajnego. Treść tokenu może być pusta.
+
+Wymagane nagłówki:
+ ```json
+ {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": "Bearer autoryzacyjny.token.jwt"
+ }
+ ```
+
+ Do tak utworzonego żądania należy załączyć w body plik, który będzie załącznikiem dodanym do dysku google.
