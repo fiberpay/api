@@ -793,7 +793,7 @@ Pobranie szczegółów danego podmiotu.
 }
 ```
 
-### POST /parties/{code}/beneficiares
+### POST /parties/{code}/beneficiaries
 
 Dodanie beneficjenta rzeczywistego do podmiotu typu company. Parametry żądania:
 
@@ -1214,32 +1214,6 @@ Zwraca zdarzenia przypisane do użytkownika.
 
 Jeśli użytkownik nie posiada żadnych zdarzeń zwracany jest adekwatny komunikat ze statusem 200.
 
-### GET /events/party/{code}
-
-Zwraca zdarzenia przypisane do użytkownika i powiązane z podmiotem o podanym identyfikatorze.
-
-#### Przykładowa odpowiedź serwera:
-
-* **STATUS 200 OK**
-
-```json
-{
-  "data": [
-    {
-      "code": "7mfv2d45tnqy",
-      "partyCode": "eh46xfadk8n3",
-      "description": "Party created",
-      "type": "create",
-      "significance": "info",
-      "createdAt": "2022-03-15T12:45:12.000000Z",
-      "hasComments": false
-    }
-  ]
-}
-```
-
-Jeśli użytkownik nie posiada żadnych zdarzeń zwracany jest adekwatny komunikat ze statusem 200.
-
 ### GET /events/{code}
 
 Zwraca zdarzenie o podanym identyfikatorze wraz z powiązanymi z nim komentarzami.
@@ -1302,45 +1276,6 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 }
 ```
 
-### POST /alerts
-
-Utworzenie nowego alertu. Tworzony przez użytkownika alert będzie miał przypisany rodzaj "zadanie". Parametry żądania:
-
-| Parametr            | Wymagane | Opis                                                                        |
-| --------            | -------- | --------------------------------------------------------------------------- |
-| **content**         | TAK      | Treść alertu.                                                               |
-| **partyCode**       | NIE      | Kod powiązanego podmiotu.                                                   |
-| **transactionCode** | NIE      | Kod powiązanej transakcji.                                                  |
-
-#### Przykładowe dane do utworzenia alertu:
-
-```json
-{
-  "content": "alert testowy api",
-  "transactionCode": "",
-  "partyCode": "",
-}
-```
-#### Przykładowa odpowiedź serwera:
-
-- **STATUS 201 CREATED**
-
-```json
-{
-  "data":
-    {
-      "code": "9u187g4y2fcq",
-      "content": "alert testowy api",
-      "type": "task",
-      "status": "new",
-      "taskDone": false,
-      "partyCode": null,
-      "transactionCode": null,
-      "createdAt": "2022-07-18T13:22:42.000000Z"
-    }
-}
-```
-
 ### GET /alerts
 
 Pobranie alertów powiązanych z danym użytkownikiem.
@@ -1385,120 +1320,6 @@ Pobranie szczegółów wskazanego kodem alertu.
   }
 }
 ```
-
-### GET /subscriptions
-
-Zwraca możliwe do wykupienia plany subskrypcji.
-
-#### Przykładowa odpowiedź serwera:
-
-* **STATUS 200 OK**
-
-```json
-{
-  "data": [
-    {
-      "name": "monthPlan",
-      "duration": "month",
-      "price": "50.00",
-      "currency": "PLN"
-    },
-    {
-      "name": "quarterPlan",
-      "duration": "3 months",
-      "price": "125.00",
-      "currency": "PLN"
-    },
-    {
-      "name": "yearPlan",
-      "duration": "12 months",
-      "price": "450.00",
-      "currency": "PLN"
-    }
-  ]
-}
-```
-
-### GET /subscriptions/mine
-
-Zwraca informacje o aktywnych i utworzonych subskrypcjach.
-
-#### Przykładowa odpowiedź serwera:
-
-* **STATUS 200 OK**
-
-```json
-{
-  "data": [
-    {
-      "code": "w1qdj84u6hta",
-      "type": "monthPlan",
-      "status": "active",
-      "availableFrom": "2022-06-01 00:00:00",
-      "availableTo": "2022-07-01 00:00:00",
-      "redirect": null
-    }
-  ]
-}
-```
-
-### GET /subscriptions/mine
-
-Zwraca informacje o aktywnej subskrypcji.
-
-#### Przykładowa odpowiedź serwera:
-
-* **STATUS 200 OK**
-
-```json
-{
-  "data": {
-    "code": "w1qdj84u6hta",
-    "type": "monthPlan",
-    "status": "active",
-    "availableFrom": "2022-06-01 00:00:00",
-    "availableTo": "2022-07-01 00:00:00"
-  }
-}
-```
-
-### POST /subscriptions/create
-
-Utworzenie nowej subskrypcji. Parametry żądania:
-
-| Parametr          | Wymagane | Opis                                                               |
-| ----------------- | -------- | ------------------------------------------------------------------ |
-| **type**          | TAK      | Nazwa subskrypcji                                                  |
-| **availableFrom** | TAK      | Data od kiedy subskrypcja ma zacząć działać, wymagany format Y-m-d |
-
-#### Przykładowe dane do utworzenia komentarza:
-
-```json
-{
-  "type": "monthPlan",
-  "availableFrom": "2022-07-01"
-}
-```
-
-#### Przykładowa odpowiedź serwera:
-
-* **STATUS 201 CREATED**
-
-```json
-{
-  "data": {
-      "code": "f6xuvsw5jgz4",
-      "type": "monthPlan",
-      "status": "waiting_for_payment",
-      "availableFrom": "2022-06-30T22:00:00.000000Z",
-      "availableTo": "2022-07-31T22:00:00.000000Z",
-      "redirect": "http://fiberpay.pl/"
-  }
-}
-```
-### DELETE /subscriptions/{code}
-
-Usunięcie subksrypcji wskazanej kodem identyfikującym. Subksrypcja może zostać usunięta tylko wtedy gdy nie jest jeszcze opłacona.
 
 ### GET /google/info
 
@@ -1563,7 +1384,7 @@ Zwraca listę załączników powiązanych z transakcją wskazaną kodem identyfi
 }
 ```
 
-### GET /transactions/{code}/attachments
+### GET /parties/{code}/attachments
 
 Zwraca listę załączników powiązanych z podmiotem wskazanym kodem identyfikującym.
 
