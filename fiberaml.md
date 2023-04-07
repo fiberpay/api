@@ -74,8 +74,7 @@ a) individual:
 | -------------------------- | -------- | --------------------------------------------------------------------------- |
 | **firstName**              | NIE      | Imie podmiotu                                                               |
 | **lastName**               | NIE      | Nazwisko podmiotu                                                           |
-| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest
-parametr personalIdentifier)            |
+| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)            |
 | **personalIdentifier**     | NIE      | Numer identifykacyjny podmiotu (wymagany jeśli nie ma numeru pesel)         |
 | **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
 | **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
