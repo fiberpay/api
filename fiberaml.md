@@ -1,21 +1,49 @@
----
-Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terroryzmu
----
+## Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terroryzmu
 
-# FiberAML
+# SystemAML
+
+###
+## Spis treści:
+- 1. [Informacje ogólne](#Informacjeoglne)
+  - 1.1. [Klucze API](#KluczeAPI)
+  - 1.2. [Nagłówek zapytania](#Nagwekzapytania)
+  - 1.3. [Ciało zapytania](#Ciaozapytania)
+- 2. [Opis usług](#Opisusug)
+  - 2.1. [POST /parties](#POSTparties)
+  - 2.2. [PATCH /parties](#PATCHparties)
+  - 2.3. [GET /parties](#GETparties)
+  - 2.4. [GET /parties/{code}](#GETpartiescode)
+  - 2.5. [POST /parties/{code}/beneficiaries](#POSTpartiescodebeneficiaries)
+  - 2.6. [GET /parties/{code}/beneficiaries](#GETpartiescodebeneficiaries)
+  - 2.7. [DELETE /beneficiaries/{code}](#DELETEbeneficiariescode)
+  - 2.8. [GET /parties/pdf/{code}](#GETpartiespdfcode)
+  - 2.9. [DELETE /parties/{code}](#DELETEpartiescode)
+  - 2.10 [POST /transactions](#POSTtransactions)
+  - 2.11. [GET /transactions](#GETtransactions)
+  - 2.12. [GET /transactions/{code}](#GETtransactionscode)
+  - 2.13. [GET /transactions/pdf/{code}](#GETtransactionspdfcode)
+  - 2.14. [DELETE /transactions/{code}](#DELETEtransactionscode)
+  - 2.15. [POST /events](#POSTevents)
+  - 2.16. [GET /events](#GETevents)
+  - 2.17. [GET /events/{code}](#GETeventscode)
+  - 2.18. [POST /comments](#POSTcomments)
+  - 2.19. [GET /alerts](#GETalerts)
+  - 2.20. [GET /alerts/{code}](#GETalertscode)
+
+#
 
 ###
 
-## Informacje ogólne
+## 1. <a name='Informacjeoglne'></a>Informacje ogólne
 
 Głównym zastosowaniem API jest katalogowanie podmiotów, przez działalności od których wymagane jest prowadzenie ewidencji klientów.
 
-### Klucze API
+### 1.1. <a name='KluczeAPI'></a>Klucze API
 
 Do korzystania z API konieczne jest wygenerowanie kluczy:
 
-* jawnego (apiKey) - używanego do przesyłania w ramach żądań API
-* tajnego (secretKey) - używanego do podpisywania żądań (nigdy nie powinien by przesyłany lub ujawniany)
+- jawnego (apiKey) - używanego do przesyłania w ramach żądań API
+- tajnego (secretKey) - używanego do podpisywania żądań (nigdy nie powinien by przesyłany lub ujawniany)
 
 W celu uzyskania danych dostępowych niezbędnych do poprawnego korzystania z API należy skontaktować się bezpośrednio z usługodawcą.
 
@@ -44,53 +72,53 @@ W przypadku niepoprawnego wykorzystania kluczy dostępowych serwer zwraca nastę
 }
 ```
 
-### Nagłówek zapytania
+### 1.2. <a name='Nagwekzapytania'></a>Nagłówek zapytania
 
 Każde żądanie do API powinno posiadać następujący nagłówek:
 
-* Api-Key – wygenerowany klucz jawny
+- Api-Key – wygenerowany klucz jawny
 
 W przypadku zapytań nie posiadających body, należy wysłąć żądanie z nagłówkiem Authorization o wartości "Bearer {token}" (pusty string w postaci JWT z odpowiednią sygnaturą).
 
-### Ciało zapytania
+### 1.3. <a name='Ciaozapytania'></a>Ciało zapytania
 
 Każde ciało zapytania jest przekazywane za pomocą JWT z wykorzystaniem odpowiedniej sygnatury. Body żądania powinno być tekstem (JWT).
 
-## Opis usług
+## 2. <a name='Opisusug'></a>Opis usług
 
-### POST /parties
+### 2.1. <a name='POSTparties'></a>POST /parties
 
 Utworzenie nowego podmiotu. Parametry żądania:
 
-| Parametr | Wymagane | Opis                                                                         |
-| -------- | -------- | ---------------------------------------------------------------------------- |
-| **type** | TAK      | Typ podmiotu. Aktualnie wspierane: individual, sole\_proprietorship, company |
+| Parametr | Wymagane | Opis                                                                        |
+| -------- | -------- | --------------------------------------------------------------------------- |
+| **type** | TAK      | Typ podmiotu. Aktualnie wspierane: individual, sole_proprietorship, company |
 
 W zależności od wybranego typu wymagane są następujące parametry:
 
 a) individual:
 
-| Parametr                   | Wymagane | Opis                                                                        |
-| -------------------------- | -------- | --------------------------------------------------------------------------- |
-| **firstName**              | NIE      | Imie podmiotu                                                               |
-| **lastName**               | NIE      | Nazwisko podmiotu                                                           |
-| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)            |
-| **personalIdentifier**     | NIE      | Numer identifykacyjny podmiotu (wymagany jeśli nie ma numeru pesel)         |
-| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
-| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
-| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
-| **birthCity**              | NIE      | Miasto urodzenia                                                            |
-| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
-| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
-| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
-| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
-| **references**             | NIE      | Referencje własne                                                           |
-| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                  |
+| Parametr                   | Wymagane | Opis                                                                                            |
+| -------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| **firstName**              | NIE      | Imie podmiotu                                                                                   |
+| **lastName**               | NIE      | Nazwisko podmiotu                                                                               |
+| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier) |
+| **personalIdentifier**     | NIE      | Numer identifykacyjny podmiotu (wymagany jeśli nie ma numeru pesel)                             |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                                             |
+| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                                             |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                                        |
+| **birthCity**              | NIE      | Miasto urodzenia                                                                                |
+| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                  |
+| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                   |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                                       |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                                            |
+| **references**             | NIE      | Referencje własne                                                                               |
+| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                                      |
 
-b) sole\_proprietorship - wszystkie powyższe oraz:
+b) sole_proprietorship - wszystkie powyższe oraz:
 
 | Parametr                           | Wymagane | Opis                                                                |
-| ---------------------------------- | -------- | ------------------------------------------------------------        |
+| ---------------------------------- | -------- | ------------------------------------------------------------------- |
 | **taxIdNumber**                    | TAK      | NIP prowadzonej działalności                                        |
 | **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (wymagany jeśli nie ma numeru NIP)        |
 | **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)             |
@@ -102,75 +130,75 @@ b) sole\_proprietorship - wszystkie powyższe oraz:
 
 Struktura obiektu z kodem PKD:
 
-| Parametr                 | Wymagane | Opis                                              |
-| ------------------------ | -------- | ------------------------------------------------- |
-| **pkdCode**              | TAK      | Numer kodu PKD w formacie (00.00.X)               |
-| **pkdName**              | TAK      | Opis kodu PKD                                     |
+| Parametr    | Wymagane | Opis                                |
+| ----------- | -------- | ----------------------------------- |
+| **pkdCode** | TAK      | Numer kodu PKD w formacie (00.00.X) |
+| **pkdName** | NIE      | Opis kodu PKD                       |
 
 c) company:
 
-| Parametr                           | Wymagane | Opis                                                                |
-| ---------------------------------- | -------- | ------------------------------------------------------------------- |
-| **taxIdNumber**                    | TAK      | Numer NIP                                                           |
-| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)             |
-| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP)        |
-| **companyName**                    | NIE      | Nazwa firmy                                                         |
-| **tradeName**                      | NIE      | Nazwa handlowa firmy                                                |
-| **references**                     | NIE      | Referencje własne                                                   |
-| **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                         |
-| **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                           |
-| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli nie ma numeru NIP). Aktualnie wspierane: limited\_liability\_company, civil\_partnership\_company, general\_partnership\_company, professional\_partnership\_company,limited\_partnership\_company, limited\_joint\_stock\_partnership\_company, stock\_company                            |
-| **website**                        | NIE      | Strona internetowa                                                  |
-| **servicesDescription**            | NIE      | Opis usług                                                          |
-| **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP) |
-| **pkdCodes**                       | NIE      | Tablica z pozostałymi kodami PKD (tablica zawierająca obiekty jw.)  |
-| **beneficiaries**                  | NIE      | Tablica obiektów z danymi beneficjentów                            |
-| **boardMembers**                   | NIE      | Tablica obiektów z danymi członków zarządu                         |
+| Parametr                           | Wymagane | Opis                                                                         |
+| ---------------------------------- | -------- | ---------------------------------------------------------------------------- |
+| **taxIdNumber**                    | TAK      | Numer NIP                                                                    |
+| **companyIdentifier**              | NIE      | Numer identyfikujący (wymagany jeśli nie ma numeru NIP)                      |
+| **registrationCountry**            | NIE      | Kraj rejestracji podmiotu (podawany jeśli nie ma numeru NIP)                 |
+| **companyName**                    | NIE      | Nazwa firmy                                                                  |
+| **tradeName**                      | NIE      | Nazwa handlowa firmy                                                         |
+| **references**                     | NIE      | Referencje własne                                                            |
+| **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                                  |
+| **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                                    |
+| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli nie ma numeru NIP). |
+| **website**                        | NIE      | Strona internetowa                                                           |
+| **servicesDescription**            | NIE      | Opis usług                                                                   |
+| **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP)          |
+| **pkdCodes**                       | NIE      | Tablica z pozostałymi kodami PKD (tablica zawierająca obiekty jw.)           |
+| **beneficiaries**                  | NIE      | Tablica obiektów z danymi beneficjentów                                      |
+| **boardMembers**                   | NIE      | Tablica obiektów z danymi członków zarządu                                   |
 
 Struktura obiektu beneficjenta:
 
-| Parametr                   | Wymagane | Opis                                                                        |
-| -------------------------- | -------- | --------------------------------------------------------------------------- |
-| **type**                   | TAK      | Typ podmiotu. Aktualnie wspierane: individual                               |
-| **firstName**              | NIE      | Imię beneficjenta                                                           |
-| **lastName**               | NIE      | Nazwisko beneficjenta                                                       |
-| **personalIdentityNumber** | TAK      | Numer PESEL beneficjenta (w przypadku braku numeru pesel wymagany jest
-parametr personalIdentifier)            |
-| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
-| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
-| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
-| **personalIdentifier**     | NIE      | Numer identifykacyjny beneficjenta (wymagany jeśli nie ma numeru pesel)     |
-| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
-| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
-| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
-| **birthCity**              | NIE      | Miasto urodzenia                                                            |
-| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
-| **references**             | NIE      | Referencje własne                                                           |
-| **politicallyExposed**     | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)              |
-| **ownedShares**            | TAK      | Liczba posiadanych udziałów (%)                                             |
-| **description**            | NIE      | Opis beneficjenta                                                           |
+| Parametr                     | Wymagane | Opis                                                                    |
+| ---------------------------- | -------- | ----------------------------------------------------------------------- |
+| **type**                     | TAK      | Typ podmiotu. Aktualnie wspierane: individual                           |
+| **firstName**                | NIE      | Imię beneficjenta                                                       |
+| **lastName**                 | NIE      | Nazwisko beneficjenta                                                   |
+| **personalIdentityNumber**   | TAK      | Numer PESEL beneficjenta (w przypadku braku numeru pesel wymagany jest  |
+| parametr personalIdentifier) |
+| **documentType**             | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)          |
+| **documentNumber**           | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)           |
+| **documentExpirationDate**   | NIE      | Termin ważnosci dokumentu                                               |
+| **personalIdentifier**       | NIE      | Numer identifykacyjny beneficjenta (wymagany jeśli nie ma numeru pesel) |
+| **birthDate**                | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                     |
+| **birthCountry**             | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                     |
+| **citizenship**              | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                |
+| **birthCity**                | NIE      | Miasto urodzenia                                                        |
+| **withoutExpirationDate**    | NIE      | Informacja czy dokument posiada datę ważności (bool)                    |
+| **references**               | NIE      | Referencje własne                                                       |
+| **politicallyExposed**       | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)          |
+| **ownedShares**              | TAK      | Liczba posiadanych udziałów (%)                                         |
+| **description**              | NIE      | Opis beneficjenta                                                       |
 
 Struktura obiektu członka zarządu:
 
-| Parametr                   | Wymagane | Opis                                                                        |
-| -------------------------- | -------- | --------------------------------------------------------------------------- |
-| **type**                   | TAK      | Typ podmiotu. Aktualnie wspierane: individual                               |
-| **firstName**              | NIE      | Imię członka zarządu                                                        |
-| **lastName**               | NIE      | Nazwisko członka zarządu                                                    |
-| **personalIdentityNumber** | TAK      | Numer PESEL członka zarządu (w przypadku braku numeru pesel wymagany jest
-parametr personalIdentifier)            |
-| **documentType**           | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
-| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)               |
-| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                   |
-| **personalIdentifier**     | NIE      | Numer identifykacyjny członka zarządu (wymagany jeśli nie ma numeru pesel)  |
-| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                         |
-| **birthCountry**           | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                         |
-| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                    |
-| **birthCity**              | NIE      | Miasto urodzenia                                                            |
-| **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                        |
-| **references**             | NIE      | Referencje własne                                                           |
-| **politicallyExposed**     | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)              |
-| **description**            | NIE      | Opis członka zarządu                                                        |
+| Parametr                     | Wymagane | Opis                                                                       |
+| ---------------------------- | -------- | -------------------------------------------------------------------------- |
+| **type**                     | TAK      | Typ podmiotu. Aktualnie wspierane: individual                              |
+| **firstName**                | NIE      | Imię członka zarządu                                                       |
+| **lastName**                 | NIE      | Nazwisko członka zarządu                                                   |
+| **personalIdentityNumber**   | TAK      | Numer PESEL członka zarządu (w przypadku braku numeru pesel wymagany jest  |
+| parametr personalIdentifier) |
+| **documentType**             | TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)             |
+| **documentNumber**           | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)              |
+| **documentExpirationDate**   | NIE      | Termin ważnosci dokumentu                                                  |
+| **personalIdentifier**       | NIE      | Numer identifykacyjny członka zarządu (wymagany jeśli nie ma numeru pesel) |
+| **birthDate**                | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)                        |
+| **birthCountry**             | NIE      | Kraj urodzenia (wymagany jeśli nie ma numeru pesel)                        |
+| **citizenship**              | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                   |
+| **birthCity**                | NIE      | Miasto urodzenia                                                           |
+| **withoutExpirationDate**    | NIE      | Informacja czy dokument posiada datę ważności (bool)                       |
+| **references**               | NIE      | Referencje własne                                                          |
+| **politicallyExposed**       | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)             |
+| **description**              | NIE      | Opis członka zarządu                                                       |
 
 Do każdego z typów podmiotu można dodać dane kontaktowe.
 
@@ -203,7 +231,7 @@ a) kontakt:
 | **phoneCountry** | NIE      | Prefix numeru telefonu |
 | **phoneNumber**  | NIE      | Numer telefonu         |
 
-#### Przykładowe dane do utworzenia podmiotu typu 'individual':
+#### 2.1.1. <a name='Przykadowedanedoutworzeniapodmiotutypuindividual:'></a>Przykładowe dane do utworzenia podmiotu typu 'individual':
 
 ```json
 {
@@ -256,12 +284,12 @@ a) kontakt:
   "personalContact": {
     "emailAdress": "info@fiberpay.com",
     "phoneCountry": "48",
-    "phoneNumber": "123123123",
-  },
+    "phoneNumber": "123123123"
+  }
 }
 ```
 
-#### Przykładowe dane do utworzenia podmiotu typu 'sole\_proprietorship':
+#### 2.1.2. <a name='Przykadowedanedoutworzeniapodmiotutypusole_proprietorship:'></a>Przykładowe dane do utworzenia podmiotu typu 'sole_proprietorship':
 
 ```json
 {
@@ -338,7 +366,7 @@ a) kontakt:
 }
 ```
 
-#### Przykładowe dane do utworzenia podmiotu typu 'company':
+#### 2.1.3. <a name='Przykadowedanedoutworzeniapodmiotutypucompany:'></a>Przykładowe dane do utworzenia podmiotu typu 'company':
 
 ```json
 {
@@ -374,27 +402,26 @@ a) kontakt:
     "street": "Grzybowska",
     "houseNumber": "4",
     "flatNumber": "106",
-    "postalCode": "00-131",
+    "postalCode": "00-131"
   },
   "companyContact": {
     "emailAdress": "info@fiberpay.pl",
     "phoneCountry": "48",
-    "phoneNumber": "123123123",
+    "phoneNumber": "123123123"
   },
   "mainPkdCode": {
     "pkdCode": "64.99.Z",
-    "pkdName":
-      "POZOSTAŁA FINANSOWA DZIAŁALNOŚĆ USŁUGOWA, GDZIE INDZIEJ NIESKLASYFIKOWANA, Z WYŁĄCZENIEM UBEZPIECZEŃ I FUNDUSZÓW EMERYTALNYCH",
+    "pkdName": "POZOSTAŁA FINANSOWA DZIAŁALNOŚĆ USŁUGOWA, GDZIE INDZIEJ NIESKLASYFIKOWANA, Z WYŁĄCZENIEM UBEZPIECZEŃ I FUNDUSZÓW EMERYTALNYCH"
   },
   "pkdCodes": [
     {
       "pkdCode": "58.29.Z",
-      "pkdName": "DZIAŁALNOŚĆ WYDAWNICZA W ZAKRESIE POZOSTAŁEGO OPROGRAMOWANIA",
+      "pkdName": "DZIAŁALNOŚĆ WYDAWNICZA W ZAKRESIE POZOSTAŁEGO OPROGRAMOWANIA"
     },
     {
       "pkdCode": "62.01.Z",
-      "pkdName": "DZIAŁALNOŚĆ ZWIĄZANA Z OPROGRAMOWANIEM",
-    },
+      "pkdName": "DZIAŁALNOŚĆ ZWIĄZANA Z OPROGRAMOWANIEM"
+    }
   ],
   "beneficiaries": [
     {
@@ -412,7 +439,7 @@ a) kontakt:
       "withoutExpirationDate": false,
       "birthDate": null,
       "ownedShares": "50",
-      "description": "",
+      "description": ""
     },
     {
       "type": "individual",
@@ -429,8 +456,8 @@ a) kontakt:
       "withoutExpirationDate": false,
       "birthDate": "2001-01-01",
       "description": "",
-      "ownedShares": "50",
-    },
+      "ownedShares": "50"
+    }
   ],
   "boardMembers": [
     {
@@ -448,7 +475,7 @@ a) kontakt:
       "withoutExpirationDate": false,
       "birthDate": null,
       "ownedShares": "50",
-      "description": "Prezes",
+      "description": "Prezes"
     },
     {
       "type": "individual",
@@ -464,16 +491,15 @@ a) kontakt:
       "politicallyExposed": false,
       "withoutExpirationDate": false,
       "birthDate": "2001-01-01",
-      "description": "Wiceprezes",
-    },
-  ],
-
+      "description": "Wiceprezes"
+    }
+  ]
 }
 ```
 
-#### Przykładowa odpowiedź serwera:
+#### 2.1.4. <a name='Przykadowaodpowiedserwera:'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 201 CREATED**
+- **STATUS 201 CREATED**
 
 ```json
 {
@@ -558,17 +584,17 @@ a) kontakt:
 }
 ```
 
-### PATCH /parties
+### 2.2. <a name='PATCHparties'></a>PATCH /parties
 
 Edycja utworzonego wcześniej podmiotu. Parametry żądania:
 
-| Parametr | Wymagane | Opis                                                                        |
-| -------- | -------- | --------------------------------------------------------------------------- |
-| **code** | TAK      | Kod podmiotu.                                       |
+| Parametr | Wymagane | Opis          |
+| -------- | -------- | ------------- |
+| **code** | TAK      | Kod podmiotu. |
 
 Pozostałe parametry żądania są identyczne jak w przypadku tworzenia podmiotu.
 
-#### Przykładowe dane do edycji podmiotu typu 'individual':
+#### 2.2.1. <a name='Przykadowedanedoedycjipodmiotutypuindividual:'></a>Przykładowe dane do edycji podmiotu typu 'individual':
 
 ```json
 {
@@ -580,7 +606,7 @@ Pozostałe parametry żądania są identyczne jak w przypadku tworzenia podmiotu
   "documentType": "id_card",
   "documentNumber": "AAA123456",
   "documentExpirationDate": "2022-10-15",
-  "withoutExpirationDate" : false,
+  "withoutExpirationDate": false,
   "citizenship": "PL",
   "birthCity": "Warszawa",
   "birthCountry": "PL",
@@ -604,7 +630,7 @@ Pozostałe parametry żądania są identyczne jak w przypadku tworzenia podmiotu
 }
 ```
 
-#### Przykładowa odpowiedź serwera:
+#### 2.2.2. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
 - **STATUS 200 OK**
 
@@ -658,13 +684,13 @@ Pozostałe parametry żądania są identyczne jak w przypadku tworzenia podmiotu
 }
 ```
 
-### GET /parties
+### 2.3. <a name='GETparties'></a>GET /parties
 
 Zwraca podmioty utworzone przez użytkownika.
 
-#### Przykładowa odpowiedź serwera:
+#### 2.3.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 200 OK**
+- **STATUS 200 OK**
 
 ```json
 {
@@ -702,13 +728,13 @@ Zwraca podmioty utworzone przez użytkownika.
 
 W przypadku gdy użytkownik nie posiada utworzonych podmiotów, serwer zwraca pustą tablicę.
 
-### GET /parties/{code}
+### 2.4. <a name='GETpartiescode'></a>GET /parties/{code}
 
 Pobranie szczegółów danego podmiotu.
 
-#### Przykładowa odpowiedź serwera:
+#### 2.4.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 200 OK**
+- **STATUS 200 OK**
 
 ```json
 {
@@ -793,7 +819,7 @@ Pobranie szczegółów danego podmiotu.
 }
 ```
 
-### POST /parties/{code}/beneficiaries
+### 2.5. <a name='POSTpartiescodebeneficiaries'></a>POST /parties/{code}/beneficiaries
 
 Dodanie beneficjenta rzeczywistego do podmiotu typu company. Parametry żądania:
 
@@ -804,20 +830,20 @@ Dodanie beneficjenta rzeczywistego do podmiotu typu company. Parametry żądania
 
 Struktura obiektu z danymi beneficjenta:
 
-| Parametr                   | Wymagane | Opis                                                                                                                    |
-| -------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **firstName**              | NIE      | Imie podmiotu                                                                                                           |
-| **lastName**               | NIE      | Nazwisko podmiotu                                                                                                       |
-| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)                         |
-| **documentType**           | TAK      | Rodzaj dokumentu Aktualnie wspierane: id\_card, passport, residency\_card (nie jest wymagany jeśli nie ma numeru pesel) |
-| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                           |
-| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                                                               |
-| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                                                                |
-| **birthCity**              | NIE      | Miasto urodzenia                                                                                                        |
-| **birthCountry**           | NIE      | Kraj urodzenia                                                                                                          |
-| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                                                              |
+| Parametr                   | Wymagane | Opis                                                                                                                  |
+| -------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
+| **firstName**              | NIE      | Imie podmiotu                                                                                                         |
+| **lastName**               | NIE      | Nazwisko podmiotu                                                                                                     |
+| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)                       |
+| **documentType**           | TAK      | Rodzaj dokumentu Aktualnie wspierane: id_card, passport, residency_card (nie jest wymagany jeśli nie ma numeru pesel) |
+| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                         |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                                                             |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                                                              |
+| **birthCity**              | NIE      | Miasto urodzenia                                                                                                      |
+| **birthCountry**           | NIE      | Kraj urodzenia                                                                                                        |
+| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                                                            |
 
-#### Przykładowe dane do dodania beneficjenta rzeczywistego:
+#### 2.5.1. <a name='Przykadowedanedododaniabeneficjentarzeczywistego:'></a>Przykładowe dane do dodania beneficjenta rzeczywistego:
 
 ```json
 {
@@ -837,9 +863,9 @@ Struktura obiektu z danymi beneficjenta:
 }
 ```
 
-#### Przykładowa odpowiedź serwera:
+#### 2.5.2. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 201 CREATED**
+- **STATUS 201 CREATED**
 
 ```json
 {
@@ -907,13 +933,13 @@ Struktura obiektu z danymi beneficjenta:
 }
 ```
 
-### GET /parties/{code}/beneficiaries
+### 2.6. <a name='GETpartiescodebeneficiaries'></a>GET /parties/{code}/beneficiaries
 
 Pobranie beneficjentów rzeczywistych wskazanego kodem podmiotu typu company.
 
-#### Przykładowa odpowiedź serwera:
+#### 2.6.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 200 OK**
+- **STATUS 200 OK**
 
 ```json
 {
@@ -943,80 +969,82 @@ Pobranie beneficjentów rzeczywistych wskazanego kodem podmiotu typu company.
 
 W przypadku gdy podmiot nie posiada dodanych beneficjentów rzeczywistych zwracana tablica jest pusta
 
-### DELETE /beneficiaries/{code}
+### 2.7. <a name='DELETEbeneficiariescode'></a>DELETE /beneficiaries/{code}
 
 Usunięcie beneficjenta rzeczywistego wskazanego kodem identyfikującym.
 
-### GET /parties/pdf/{code}
+### 2.8. <a name='GETpartiespdfcode'></a>GET /parties/pdf/{code}
 
 Rozpoczyna pobieranie raportu pdf z podmiotu wskazanego kodem identyfikującym.
-### DELETE /parties/{code}
+
+### 2.9. <a name='DELETEpartiescode'></a>DELETE /parties/{code}
 
 Usunięcie podmiotu wskazanego kodem identyfikującym.
 
-## POST /transactions
+## 3. <a name='POSTtransactions'></a>POST /transactions
 
 Utworzenie nowej transakcji. Parametry żądania:
 
-| Parametr | Wymagane | Opis                                                                        |
-| -------- | -------- | --------------------------------------------------------------------------- |
-| **type** | TAK      | Typ podmiotu. Aktualnie wspierane: buyer, vender, broker |
-| **occasionalTransaction** | TAK      | Informacja czy transakcja jest okazjonalna (bool) |
+| Parametr                  | Wymagane | Opis                                                     |
+| ------------------------- | -------- | -------------------------------------------------------- |
+| **type**                  | TAK      | Typ podmiotu. Aktualnie wspierane: buyer, vender, broker |
+| **occasionalTransaction** | TAK      | Informacja czy transakcja jest okazjonalna (bool)        |
 
 Jeśli transakcja jest oznaczona jako okazjonalna wymagane są następujące parametry:
 
-| Parametr          | Wymagane | Opis                                                               |
-| --------          | -------- | ------------------------------------------------------------------ |
-| **amount**        | TAK      | Kwota transakcji                                                   |
-| **currency**      | TAK      | Waluta transakcji                                                  |
-| **location**      | NIe      | Kraj w którym została przeprowadzona transakcja                    |
-| **bookedAt**      | NIE      | Data zaksięgowania transakcji                                      |
-| **description**   | NIE      | Opis transakcji (tytuł, przedmiot transakcji itd.)                 |
-| **references**    | NIE      | Referencje własne                                                  |
-| **paymentMethod** | NIE      | Sposób płatności                                                   |
-| **senderIban**    | NIE      | Numer konta nadawcy (gdy sposób płatności bank_transfer)           |
-| **receiverIban**  | NIE      | Numer konta odbiorcy (gdy sposób płatności brank_transfer)         |
+| Parametr          | Wymagane | Opis                                                       |
+| ----------------- | -------- | ---------------------------------------------------------- |
+| **amount**        | TAK      | Kwota transakcji                                           |
+| **currency**      | TAK      | Waluta transakcji                                          |
+| **location**      | NIe      | Kraj w którym została przeprowadzona transakcja            |
+| **bookedAt**      | NIE      | Data zaksięgowania transakcji                              |
+| **description**   | NIE      | Opis transakcji (tytuł, przedmiot transakcji itd.)         |
+| **references**    | NIE      | Referencje własne                                          |
+| **paymentMethod** | NIE      | Sposób płatności                                           |
+| **senderIban**    | NIE      | Numer konta nadawcy (gdy sposób płatności bank_transfer)   |
+| **receiverIban**  | NIE      | Numer konta odbiorcy (gdy sposób płatności brank_transfer) |
 
 Jeśli transakcja nie jest oznaczona jako okazjonalna dodatkowo należy podać poniższe parametry:
 
-| Parametr                | Wymagane | Opis                                                         |
-| --------                | -------- | ------------------------------------------------------------ |
-| **senderFirstName**     | NIE      | Imie nadawcy (jeśli nie jest podany kod nadawcy)             |
-| **senderLastName**      | NIE      | Nazwisko nadawcy (jeśli nie jest podany kod nadawcy)         |
-| **senderCompanyName**   | NIE      | Nazwa firmy nadawcy (jeśli nie jest podany kod nadawcy)      |
-| **senderCode**          | TAK      | Kod podmiotu nadawcy                                         |
-| **receiverFirstName**   | NIE      | Imie odbiorcy (jeśli nie jest podany kod odbiorcy)           |
-| **receiverLastName**    | NIE      | Nazwisko odbiorcy (jeśli nie jest podany kod odbiorcy)       |
-| **receiverCompanyName** | NIE      | Nazwa firmy odbiorcy (jeśli nie jest podany kod odbiorcy)    |
-| **receiverCode**        | TAK      | Kod podmiotu odbiorcy                                        |
+| Parametr                | Wymagane | Opis                                                      |
+| ----------------------- | -------- | --------------------------------------------------------- |
+| **senderFirstName**     | NIE      | Imie nadawcy (jeśli nie jest podany kod nadawcy)          |
+| **senderLastName**      | NIE      | Nazwisko nadawcy (jeśli nie jest podany kod nadawcy)      |
+| **senderCompanyName**   | NIE      | Nazwa firmy nadawcy (jeśli nie jest podany kod nadawcy)   |
+| **senderCode**          | TAK      | Kod podmiotu nadawcy                                      |
+| **receiverFirstName**   | NIE      | Imie odbiorcy (jeśli nie jest podany kod odbiorcy)        |
+| **receiverLastName**    | NIE      | Nazwisko odbiorcy (jeśli nie jest podany kod odbiorcy)    |
+| **receiverCompanyName** | NIE      | Nazwa firmy odbiorcy (jeśli nie jest podany kod odbiorcy) |
+| **receiverCode**        | TAK      | Kod podmiotu odbiorcy                                     |
 
-#### Przykładowe dane do utworzenia transakcji:
+#### 3.1. <a name='Przykadowedanedoutworzeniatransakcji:'></a>Przykładowe dane do utworzenia transakcji:
 
 ```json
-  {
-    "type": "broker",
-    "occasionalTransaction": false,
-    "amount": 1250,
-    "currency": "PLN",
-    "location": "PL",
-    "bookedAt": "2021-05-10 11:06:29",
-    "description": "zapłata za rower",
-    "references": "ABC123123123",
-    "paymentMethod": "bank_transfer",
-    "senderIban": "PL12341234123412341234123412",
-    "receiverIban": "PL34123412341234123412341234",
-    "senderFirstName": "",
-    "senderLastName": "",
-    "senderCode": "htu7evj63xkf",
-    "receiverFirstName": "",
-    "receiverLastName": "",
-    "receiverCode": "8mjken1c725h"
-  }
+{
+  "type": "broker",
+  "occasionalTransaction": false,
+  "amount": 1250,
+  "currency": "PLN",
+  "location": "PL",
+  "bookedAt": "2021-05-10 11:06:29",
+  "description": "zapłata za rower",
+  "references": "ABC123123123",
+  "paymentMethod": "bank_transfer",
+  "senderIban": "PL12341234123412341234123412",
+  "receiverIban": "PL34123412341234123412341234",
+  "senderFirstName": "",
+  "senderLastName": "",
+  "senderCode": "htu7evj63xkf",
+  "receiverFirstName": "",
+  "receiverLastName": "",
+  "receiverCode": "8mjken1c725h"
+}
 ```
 
-#### Przykładowa odpowiedź serwera:
+#### 3.2. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
 - **STATUS 201 CREATED**
+
 ```json
 {
   "data": {
@@ -1046,11 +1074,11 @@ Jeśli transakcja nie jest oznaczona jako okazjonalna dodatkowo należy podać p
 }
 ```
 
-### GET /transactions
+### 3.1. <a name='GETtransactions'></a>GET /transactions
 
 Zwraca transakcje utworzone przez użytkownika.
 
-#### Przykładowa odpowiedź serwera:
+#### 3.1.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
 - **STATUS 200 OK**
 
@@ -1096,11 +1124,12 @@ Zwraca transakcje utworzone przez użytkownika.
   ]
 }
 ```
-### GET /transactions/{code}
+
+### 3.2. <a name='GETtransactionscode'></a>GET /transactions/{code}
 
 Pobranie szczegółów danej transakcji.
 
-#### Przykładowa odpowiedź serwera:
+#### 3.2.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
 - **STATUS 200 OK**
 
@@ -1133,15 +1162,15 @@ Pobranie szczegółów danej transakcji.
 }
 ```
 
-### GET /transactions/pdf/{code}
+### 3.3. <a name='GETtransactionspdfcode'></a>GET /transactions/pdf/{code}
 
 Rozpoczyna pobieranie raportu pdf z transakcji wskazanej kodem identyfikującym.
 
-### DELETE /transactions/{code}
+### 3.4. <a name='DELETEtransactionscode'></a>DELETE /transactions/{code}
 
 Usunięcie transakcji wskazanej kodem identyfikującym.
 
-### POST /events
+### 3.5. <a name='POSTevents'></a>POST /events
 
 Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 
@@ -1151,7 +1180,7 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 | **significance** | TAK      | Ważność zdarzenia. Aktualnie wspierane: info, warning, urgent |
 | **partyCode**    | NIE      | Kod powiązanego podmiotu                                      |
 
-#### Przykładowe dane do utworzenia zdarzenia:
+#### 3.5.1. <a name='Przykadowedanedoutworzeniazdarzenia:'></a>Przykładowe dane do utworzenia zdarzenia:
 
 ```json
 {
@@ -1161,9 +1190,9 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 }
 ```
 
-#### Przykładowa odpowiedź serwera:
+#### 3.5.2. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 201 CREATED**
+- **STATUS 201 CREATED**
 
 ```json
 {
@@ -1179,13 +1208,13 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 }
 ```
 
-### GET /events
+### 3.6. <a name='GETevents'></a>GET /events
 
 Zwraca zdarzenia przypisane do użytkownika.
 
-#### Przykładowa odpowiedź serwera:
+#### 3.6.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 200 OK**
+- **STATUS 200 OK**
 
 ```json
 {
@@ -1214,13 +1243,13 @@ Zwraca zdarzenia przypisane do użytkownika.
 
 Jeśli użytkownik nie posiada żadnych zdarzeń zwracany jest adekwatny komunikat ze statusem 200.
 
-### GET /events/{code}
+### 3.7. <a name='GETeventscode'></a>GET /events/{code}
 
 Zwraca zdarzenie o podanym identyfikatorze wraz z powiązanymi z nim komentarzami.
 
-#### Przykładowa odpowiedź serwera:
+#### 3.7.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 200 OK**
+- **STATUS 200 OK**
 
 ```json
 {
@@ -1244,7 +1273,7 @@ Zwraca zdarzenie o podanym identyfikatorze wraz z powiązanymi z nim komentarzam
 
 Jeśli zdarzenie nie posiada przypisanych komentarzy tablica zwracana przy kluczu "comments" jest pusta.
 
-### POST /comments
+### 3.8. <a name='POSTcomments'></a>POST /comments
 
 Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 
@@ -1253,7 +1282,7 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 | **content**   | TAK      | Treść komentarza                                               |
 | **eventCode** | TAK      | Identyfikator zdarzenia do którego będzie przypisany komentarz |
 
-#### Przykładowe dane do utworzenia komentarza:
+#### 3.8.1. <a name='Przykadowedanedoutworzeniakomentarza:'></a>Przykładowe dane do utworzenia komentarza:
 
 ```json
 {
@@ -1262,9 +1291,9 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 }
 ```
 
-#### Przykładowa odpowiedź serwera:
+#### 3.8.2. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
-* **STATUS 201 CREATED**
+- **STATUS 201 CREATED**
 
 ```json
 {
@@ -1276,11 +1305,11 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 }
 ```
 
-### GET /alerts
+### 3.9. <a name='GETalerts'></a>GET /alerts
 
 Pobranie alertów powiązanych z danym użytkownikiem.
 
-#### Przykładowa odpowiedź serwera:
+#### 3.9.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
 - **STATUS 200 OK**
 
@@ -1298,11 +1327,12 @@ Pobranie alertów powiązanych z danym użytkownikiem.
   ]
 }
 ```
-### GET /alerts/{code}
+
+### 3.10. <a name='GETalertscode'></a>GET /alerts/{code}
 
 Pobranie szczegółów wskazanego kodem alertu.
 
-#### Przykładowa odpowiedź serwera:
+#### 3.10.1. <a name='Przykadowaodpowiedserwera:-1'></a>Przykładowa odpowiedź serwera:
 
 - **STATUS 200 OK**
 
@@ -1320,130 +1350,3 @@ Pobranie szczegółów wskazanego kodem alertu.
   }
 }
 ```
-
-### GET /google/info
-
-Zwraca informację na temat nawiązanego połączenia z dyskiem google.
-
-
-#### Przykładowa odpowiedź serwera:
-
-```json
-{
-  "data": {
-    "code":"2p9nr1uj7e8q",
-    "status":"connected",
-    "gdEmail":"fiberpay@info.pl",
-    "createdAt":"2022-09-26T09:13:47.000000Z"
-  }
-}
-```
-### GET /google/login
-
-Umożliwia nawiązanie połączenia z dyskiem google. Jeśli jest to pierwsze nawiązywanie połączenia ścieżka zwraca url, który przekieruje na stronę logowania. Jest to wymagane w celu zapisywania załączników na dysku google klienta.
-
-### POST /google/auth
-
-Po udanym zalogowaniu google zwraca informację o kodzie użytkownika. Ten kod musi zostać przekazany w body tego żądania. Dzięki temu, system aml będzie mógł utworzyć token dostępu do dysku google.
-
-#### Przykładowe dane do utworzenia tokenu dostępu:
-
-```json
-{
-  "code": "4/0XXXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXX-vXXX",
-}
-```
-### GET /google/logout
-
-Usunięcie powiązania z dyskiem google. Wylogowanie systemu aml z dysku google klienta. Nie powoduje usunięcia załączników z dysku google.
-
-### GET /transactions/{code}/attachments
-
-Zwraca listę załączników powiązanych z transakcją wskazaną kodem identyfikującym.
-
-#### Przykładowa odpowiedź serwera:
-
-```json
-{
-  "data":[
-    {
-      "name":"fiberpay-logo.jpeg",
-      "id":"1oNeDxA4mD4d1SXeCyYvZeSwSAGdoOqJp",
-      "mimeType":"image\/jpeg",
-      "createdTime":"2022-09-07T12:27:32.597Z",
-      "size":"4242795"
-    },
-    {
-      "name":"bilet.pdf",
-      "id":"1doMeLr9Boe2abByDzswLS7z_aEvBG6Dm",
-      "mimeType":"application\/pdf",
-      "createdTime":"2022-09-06T14:37:31.284Z",
-      "size":"112852"
-    }
-  ]
-}
-```
-
-### GET /parties/{code}/attachments
-
-Zwraca listę załączników powiązanych z podmiotem wskazanym kodem identyfikującym.
-
-#### Przykładowa odpowiedź serwera:
-
-```json
-{
-  "data":[
-    {
-      "name":"fiberpay-logo.jpeg",
-      "id":"1oNeDxA4mD4d1SXeCyYvZeSwSAGdoOqJp",
-      "mimeType":"image\/jpeg",
-      "createdTime":"2022-09-07T12:27:32.597Z",
-      "size":"4242795"
-    },
-    {
-      "name":"bilet.pdf",
-      "id":"1doMeLr9Boe2abByDzswLS7z_aEvBG6Dm",
-      "mimeType":"application\/pdf",
-      "createdTime":"2022-09-06T14:37:31.284Z",
-      "size":"112852"
-    }
-  ]
-}
-```
-
-### GET /attachments/{gdId}
-
-Rozpoczyna pobieranie załącznika wskazanego numerem identyfikacyjnym z dysku google.
-### DELETE /attachments/{gdId}
-
-Usuwa załącznik wskazany numerem identyfikacyjnym z dysku google.
-
-### POST /transactions/attachments/{code}
-
-Dodaje załącznik do transakcji wskazanej kodem identyfikującym. Załącznik zostanie zapisany na dysku google. Autoryzacyjny token jwt powinien posiadać sygnaturę na podstawie klucza tajnego. Treść tokenu może być pusta.
-
-Wymagane nagłówki:
- ```json
- {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "Authorization": "Bearer autoryzacyjny.token.jwt"
- }
- ```
-
- Do tak utworzonego żądania należy załączyć w body plik, który będzie załącznikiem dodanym do dysku google.
-
-### POST /parties/attachments/{code}
-
-Dodaje załącznik do podmiotu wskazanego kodem identyfikującym. Załącznik zostanie zapisany na dysku google. Autoryzacyjny token jwt powinien posiadać sygnaturę na podstawie klucza tajnego. Treść tokenu może być pusta.
-
-Wymagane nagłówki:
- ```json
- {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "Authorization": "Bearer autoryzacyjny.token.jwt"
- }
- ```
-
- Do tak utworzonego żądania należy załączyć w body plik, który będzie załącznikiem dodanym do dysku google.
