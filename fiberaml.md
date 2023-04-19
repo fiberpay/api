@@ -5,11 +5,11 @@ Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terrory
 
 ###
 ## Spis treści:
-- 1. [Informacje ogólne](#Informacjeoglne)
-  - 1.1. [Klucze API](#KluczeAPI)
-  - 1.2. [Nagłówek zapytania](#Nagwekzapytania)
-  - 1.3. [Ciało zapytania](#Ciaozapytania)
-- 2. [Opis usług](#Opisusug)
+- 1. [Informacje ogólne](##-Informacje-ogólne)
+  - 1.1. [Klucze API](###-Klucze-API)
+  - 1.2. [Nagłówek zapytania](###-Nagłówek-zapytania)
+  - 1.3. [Ciało zapytania](###-Ciało-zapytania)
+- 2. [Opis usług](##-Opis-usług)
   - 2.1. [POST /parties](#POSTparties)
   - 2.2. [PATCH /parties](#PATCHparties)
   - 2.3. [GET /parties](#GETparties)
@@ -25,7 +25,7 @@ Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terrory
   - 2.13. [GET /transactions/pdf/{code}](#GETtransactionspdfcode)
   - 2.14. [DELETE /transactions/{code}](#DELETEtransactionscode)
   - 2.15. [POST /events](#POSTevents)
-  - 2.16. [GET /events](#GETevents)
+  - 2.16. [GET /events](#-GET-events)
   - 2.17. [GET /events/{code}](#GETeventscode)
   - 2.18. [POST /comments](#POSTcomments)
   - 2.19. [GET /alerts](#GETalerts)
