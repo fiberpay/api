@@ -14,7 +14,7 @@ Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terrory
   - 2.2. [PATCH /parties](#patch-parties)
   - 2.3. [GET /parties](#get-parties)
   - 2.4. [GET /parties/{code}](#get-parties#{code})
-  - 2.5. [POST /parties/{code}/beneficiaries](#post-parties#{code}#beneficiaries)
+  - 2.5. [POST /parties/{code}/beneficiaries](#post-partiescodebeneficiaries)
   - 2.6. [GET /parties/{code}/beneficiaries](#get-parties#{code}#beneficiaries)
   - 2.7. [DELETE /beneficiaries/{code}](#delete-beneficiaries#{code})
   - 2.8. [GET /parties/pdf/{code}](#get-parties#pdf#{code})
