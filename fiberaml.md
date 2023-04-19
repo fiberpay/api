@@ -1,8 +1,41 @@
 ---
 Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terroryzmu
 ---
+# SystemAML
 
-# FiberAML
+###
+## Spis treści:
+- 1. [Informacje ogólne](#Informacjeoglne)
+  - 1.1. [Klucze API](#KluczeAPI)
+  - 1.2. [Nagłówek zapytania](#Nagwekzapytania)
+  - 1.3. [Ciało zapytania](#Ciaozapytania)
+- 2. [Opis usług](#Opisusug)
+  - 2.1. [POST /parties](#POSTparties)
+  - 2.2. [PATCH /parties](#PATCHparties)
+  - 2.3. [GET /parties](#GETparties)
+  - 2.4. [GET /parties/{code}](#GETpartiescode)
+  - 2.5. [POST /parties/{code}/beneficiaries](#POSTpartiescodebeneficiaries)
+  - 2.6. [GET /parties/{code}/beneficiaries](#GETpartiescodebeneficiaries)
+  - 2.7. [DELETE /beneficiaries/{code}](#DELETEbeneficiariescode)
+  - 2.8. [GET /parties/pdf/{code}](#GETpartiespdfcode)
+  - 2.9. [DELETE /parties/{code}](#DELETEpartiescode)
+  - 2.10 [POST /transactions](#POSTtransactions)
+  - 2.11. [GET /transactions](#GETtransactions)
+  - 2.12. [GET /transactions/{code}](#GETtransactionscode)
+  - 2.13. [GET /transactions/pdf/{code}](#GETtransactionspdfcode)
+  - 2.14. [DELETE /transactions/{code}](#DELETEtransactionscode)
+  - 2.15. [POST /events](#POSTevents)
+  - 2.16. [GET /events](#GETevents)
+  - 2.17. [GET /events/{code}](#GETeventscode)
+  - 2.18. [POST /comments](#POSTcomments)
+  - 2.19. [GET /alerts](#GETalerts)
+  - 2.20. [GET /alerts/{code}](#GETalertscode)
+
+#
+
+###
+
+## Informacje ogólne
 
 ###
 
@@ -105,7 +138,7 @@ Struktura obiektu z kodem PKD:
 | Parametr                 | Wymagane | Opis                                              |
 | ------------------------ | -------- | ------------------------------------------------- |
 | **pkdCode**              | TAK      | Numer kodu PKD w formacie (00.00.X)               |
-| **pkdName**              | TAK      | Opis kodu PKD                                     |
+| **pkdName**              | NIE      | Opis kodu PKD                                     |
 
 c) company:
 
@@ -119,13 +152,13 @@ c) company:
 | **references**                     | NIE      | Referencje własne                                                   |
 | **nationalBusinessRegistryNumber** | NIE      | Numer Regon                                                         |
 | **nationalCourtRegistryNumber**    | NIE      | Numer KRS                                                           |
-| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli nie ma numeru NIP). Aktualnie wspierane: limited\_liability\_company, civil\_partnership\_company, general\_partnership\_company, professional\_partnership\_company,limited\_partnership\_company, limited\_joint\_stock\_partnership\_company, stock\_company                            |
+| **businessActivityForm**           | TAK      | Rodzaj prowadzonej działalności (Nie jest wymagane jeśli nie ma numeru NIP). |
 | **website**                        | NIE      | Strona internetowa                                                  |
 | **servicesDescription**            | NIE      | Opis usług                                                          |
 | **mainPkdCode**                    | TAK      | Obiekt z przeważającym kodem PKD (nie jest wymagany gdy nie ma NIP) |
 | **pkdCodes**                       | NIE      | Tablica z pozostałymi kodami PKD (tablica zawierająca obiekty jw.)  |
-| **beneficiaries**                  | NIE      | Tablica obiektów z danymi beneficjentów                            |
-| **boardMembers**                   | NIE      | Tablica obiektów z danymi członków zarządu                         |
+| **beneficiaries**                  | NIE      | Tablica obiektów z danymi beneficjentów                             |
+| **boardMembers**                   | NIE      | Tablica obiektów z danymi członków zarządu                          |
 
 Struktura obiektu beneficjenta:
 
@@ -1320,130 +1353,3 @@ Pobranie szczegółów wskazanego kodem alertu.
   }
 }
 ```
-
-### GET /google/info
-
-Zwraca informację na temat nawiązanego połączenia z dyskiem google.
-
-
-#### Przykładowa odpowiedź serwera:
-
-```json
-{
-  "data": {
-    "code":"2p9nr1uj7e8q",
-    "status":"connected",
-    "gdEmail":"fiberpay@info.pl",
-    "createdAt":"2022-09-26T09:13:47.000000Z"
-  }
-}
-```
-### GET /google/login
-
-Umożliwia nawiązanie połączenia z dyskiem google. Jeśli jest to pierwsze nawiązywanie połączenia ścieżka zwraca url, który przekieruje na stronę logowania. Jest to wymagane w celu zapisywania załączników na dysku google klienta.
-
-### POST /google/auth
-
-Po udanym zalogowaniu google zwraca informację o kodzie użytkownika. Ten kod musi zostać przekazany w body tego żądania. Dzięki temu, system aml będzie mógł utworzyć token dostępu do dysku google.
-
-#### Przykładowe dane do utworzenia tokenu dostępu:
-
-```json
-{
-  "code": "4/0XXXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXX-vXXX",
-}
-```
-### GET /google/logout
-
-Usunięcie powiązania z dyskiem google. Wylogowanie systemu aml z dysku google klienta. Nie powoduje usunięcia załączników z dysku google.
-
-### GET /transactions/{code}/attachments
-
-Zwraca listę załączników powiązanych z transakcją wskazaną kodem identyfikującym.
-
-#### Przykładowa odpowiedź serwera:
-
-```json
-{
-  "data":[
-    {
-      "name":"fiberpay-logo.jpeg",
-      "id":"1oNeDxA4mD4d1SXeCyYvZeSwSAGdoOqJp",
-      "mimeType":"image\/jpeg",
-      "createdTime":"2022-09-07T12:27:32.597Z",
-      "size":"4242795"
-    },
-    {
-      "name":"bilet.pdf",
-      "id":"1doMeLr9Boe2abByDzswLS7z_aEvBG6Dm",
-      "mimeType":"application\/pdf",
-      "createdTime":"2022-09-06T14:37:31.284Z",
-      "size":"112852"
-    }
-  ]
-}
-```
-
-### GET /parties/{code}/attachments
-
-Zwraca listę załączników powiązanych z podmiotem wskazanym kodem identyfikującym.
-
-#### Przykładowa odpowiedź serwera:
-
-```json
-{
-  "data":[
-    {
-      "name":"fiberpay-logo.jpeg",
-      "id":"1oNeDxA4mD4d1SXeCyYvZeSwSAGdoOqJp",
-      "mimeType":"image\/jpeg",
-      "createdTime":"2022-09-07T12:27:32.597Z",
-      "size":"4242795"
-    },
-    {
-      "name":"bilet.pdf",
-      "id":"1doMeLr9Boe2abByDzswLS7z_aEvBG6Dm",
-      "mimeType":"application\/pdf",
-      "createdTime":"2022-09-06T14:37:31.284Z",
-      "size":"112852"
-    }
-  ]
-}
-```
-
-### GET /attachments/{gdId}
-
-Rozpoczyna pobieranie załącznika wskazanego numerem identyfikacyjnym z dysku google.
-### DELETE /attachments/{gdId}
-
-Usuwa załącznik wskazany numerem identyfikacyjnym z dysku google.
-
-### POST /transactions/attachments/{code}
-
-Dodaje załącznik do transakcji wskazanej kodem identyfikującym. Załącznik zostanie zapisany na dysku google. Autoryzacyjny token jwt powinien posiadać sygnaturę na podstawie klucza tajnego. Treść tokenu może być pusta.
-
-Wymagane nagłówki:
- ```json
- {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "Authorization": "Bearer autoryzacyjny.token.jwt"
- }
- ```
-
- Do tak utworzonego żądania należy załączyć w body plik, który będzie załącznikiem dodanym do dysku google.
-
-### POST /parties/attachments/{code}
-
-Dodaje załącznik do podmiotu wskazanego kodem identyfikującym. Załącznik zostanie zapisany na dysku google. Autoryzacyjny token jwt powinien posiadać sygnaturę na podstawie klucza tajnego. Treść tokenu może być pusta.
-
-Wymagane nagłówki:
- ```json
- {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "Authorization": "Bearer autoryzacyjny.token.jwt"
- }
- ```
-
- Do tak utworzonego żądania należy załączyć w body plik, który będzie załącznikiem dodanym do dysku google.
