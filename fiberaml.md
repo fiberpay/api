@@ -248,7 +248,7 @@ a) kontakt:
 
 | Parametr         | Wymagane | Opis                   |
 | ---------------- | -------- | ---------------------- |
-| **email**        | NIE      | Adres email            |
+| **emailAdress**  | NIE      | Adres email            |
 | **phoneCountry** | NIE      | Prefix numeru telefonu |
 | **phoneNumber**  | NIE      | Numer telefonu         |
 
