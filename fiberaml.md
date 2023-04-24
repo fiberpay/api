@@ -14,29 +14,31 @@ Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terrory
   - 1.3. [Ciało zapytania](#ciało-zapytania)
 - 2. [Opis usług](#opis-usług)
   - 2.1. [POST /parties](#post-parties)
-  - 2.2. [PATCH /parties](#patch-parties)
-  - 2.3. [GET /parties](#get-parties)
-  - 2.4. [GET /parties/{code}](#get-partiescode)
-  - 2.5. [POST /parties/{code}/beneficiaries](#post-partiescodebeneficiaries)
-  - 2.6. [GET /parties/{code}/beneficiaries](#get-partiescodebeneficiaries)
-  - 2.7. [DELETE /beneficiaries/{code}](#delete-beneficiariescode)
-  - 2.8. [GET /parties/pdf/{code}](#get-partiespdfcode)
-  - 2.9. [DELETE /parties/{code}](#delete-partiescode)
-  - 2.10 [POST /transactions](#post-transactions)
-  - 2.11. [GET /transactions](#get-transactions)
-  - 2.12. [GET /transactions/{code}](#get-transactionscode)
-  - 2.13. [GET /transactions/pdf/{code}](#get-transactionspdfcode)
-  - 2.14. [DELETE /transactions/{code}](#delete-transactionscode)
-  - 2.15. [POST /events](#post-events)
-  - 2.16. [GET /events](#get-events)
-  - 2.17. [GET /events/{code}](#get-eventscode)
+  - 2.2. [GET /parties](#get-parties)
+  - 2.3. [GET /parties/{code}](#get-partiescode)
+  - 2.4. [GET /parties/pdf/{code}](#get-partiespdfcode)
+  - 2.5. [DELETE /parties/{code}](#delete-partiescode)
+  - 2.6. [POST /parties/{code}/beneficiaries](#post-partiescodebeneficiaries)
+  - 2.7. [GET /parties/{code}/beneficiaries](#get-partiescodebeneficiaries)
+  - 2.8. [DELETE /beneficiaries/{code}](#delete-beneficiariescode)
+  - 2.9 [POST /transactions](#post-transactions)
+  - 2.10. [GET /transactions](#get-transactions)
+  - 2.11. [GET /transactions/{code}](#get-transactionscode)
+  - 2.12. [GET /transactions/pdf/{code}](#get-transactionspdfcode)
+  - 2.13. [DELETE /transactions/{code}](#delete-transactionscode)
+  - 2.14. [POST /events](#post-events)
+  - 2.15. [GET /events](#get-events)
+  - 2.16. [GET /events/{code}](#get-eventscode)
+  - 2.17. [DELETE /events/{code}](#delete-eventscode)
   - 2.18. [POST /comments](#post-comments)
-  - 2.19. [GET /alerts](#get-alerts)
-  - 2.20. [GET /alerts/{code}](#get-alertscode)
-  - 2.21. [POST /tasks](#post-tasks)
-  - 2.22. [GET /tasks](#get-tasks)
-  - 2.23. [GET /tasks/{code}](#get-taskscode)
-
+  - 2.19. [DELETE /comments/{code}](#delete-commentscode)
+  - 2.20. [GET /alerts](#get-alerts)
+  - 2.21. [GET /alerts/{code}](#get-alertscode)
+  - 2.22. [DELETE /alerts/{code}]($delete-alertscode)
+  - 2.23. [POST /tasks](#post-tasks)
+  - 2.24. [GET /tasks](#get-tasks)
+  - 2.25. [GET /tasks/{code}](#get-taskscode)
+  - 2.26. [DELETE /tasks/{code}](#delete-taskscode)
 #
 
 ###
@@ -607,106 +609,6 @@ a) kontakt:
 }
 ```
 
-### PATCH /parties
-
-Edycja utworzonego wcześniej podmiotu. Parametry żądania:
-
-| Parametr | Wymagane | Opis          |
-| -------- | -------- | ------------- |
-| **code** | TAK      | Kod podmiotu. |
-
-Pozostałe parametry żądania są identyczne jak w przypadku tworzenia podmiotu.
-
-#### Przykładowe dane do edycji podmiotu typu 'individual':
-
-```json
-{
-  "code": "xswyvgqa37zp",
-  "type": "individual",
-  "firstName": "Jan",
-  "lastName": "Kowalski",
-  "personalIdentityNumber": "01234567880",
-  "documentType": "id_card",
-  "documentNumber": "AAA123456",
-  "documentExpirationDate": "2022-10-15",
-  "withoutExpirationDate": false,
-  "citizenship": "PL",
-  "birthCity": "Warszawa",
-  "birthCountry": "PL",
-  "politicallyExposed": false,
-  "accommodationAddress": {
-    "country": "PL",
-    "city": "Warszawa",
-    "street": "Grzybowska",
-    "houseNumber": "4",
-    "flatNumber": "106",
-    "postalCode": "00-131"
-  },
-  "forwardAddress": {
-    "country": "PL",
-    "city": "Warszawa",
-    "street": "Grzybowska",
-    "houseNumber": "4",
-    "flatNumber": "106",
-    "postalCode": "11-131"
-  }
-}
-```
-
-#### Przykładowa odpowiedź serwera:
-
-- **STATUS 200 OK**
-
-```json
-{
-  "data": {
-    "code": "htu7evj63xkf",
-    "type": "individual",
-    "entity": {
-      "code": "1jz4p297vgxd",
-      "firstName": "Jan",
-      "lastName": "Kowalski",
-      "personalIdentityNumber": "50201204873",
-      "documentType": "id_card",
-      "documentNumber": "aze123456",
-      "documentExpirationDate": "2022-10-15",
-      "withoutExpirationDate": false,
-      "citizenship": "PL",
-      "birthCity": "Dębica",
-      "birthCountry": "PL",
-      "politicallyExposed": false,
-      "createdAt": "2022-06-01T14:38:22.000000Z",
-      "birthDate": null
-    },
-    "addresses": [
-      {
-        "code": "jnh1s2854a6f",
-        "type": "accommodation_address",
-        "country": "PL",
-        "city": "Warszawa",
-        "street": "Grzybowska",
-        "houseNumber": "4",
-        "flatNumber": "106",
-        "postalCode": "00-131",
-        "createdAt": "2022-06-01T14:38:22.000000Z"
-      },
-      {
-        "code": "bhjp8254amxw",
-        "type": "forwarding_address",
-        "country": "PL",
-        "city": "Warszawa",
-        "street": "Grzybowska",
-        "houseNumber": "4",
-        "flatNumber": "106",
-        "postalCode": "00-131",
-        "createdAt": "2022-07-18T11:44:46.000000Z"
-      }
-    ],
-    "contacts": []
-  }
-}
-```
-
 ### GET /parties
 
 Zwraca podmioty utworzone przez użytkownika.
@@ -841,6 +743,15 @@ Pobranie szczegółów danego podmiotu.
   }
 }
 ```
+
+### GET /parties/pdf/{code}
+
+Rozpoczyna pobieranie raportu pdf z podmiotu wskazanego kodem identyfikującym.
+
+### DELETE /parties/{code}
+
+Usunięcie podmiotu wskazanego kodem identyfikującym.
+
 
 ### POST /parties/{code}/beneficiaries
 
@@ -996,13 +907,6 @@ W przypadku gdy podmiot nie posiada dodanych beneficjentów rzeczywistych zwraca
 
 Usunięcie beneficjenta rzeczywistego wskazanego kodem identyfikującym.
 
-### GET /parties/pdf/{code}
-
-Rozpoczyna pobieranie raportu pdf z podmiotu wskazanego kodem identyfikującym.
-
-### DELETE /parties/{code}
-
-Usunięcie podmiotu wskazanego kodem identyfikującym.
 
 ## POST /transactions
 
@@ -1297,6 +1201,10 @@ Zwraca zdarzenie o podanym identyfikatorze wraz z powiązanymi z nim komentarzam
 
 Jeśli zdarzenie nie posiada przypisanych komentarzy tablica zwracana przy kluczu "comments" jest pusta.
 
+### DELETE /events/{code}
+
+Usunięcie zdarzenia wskazanego kodem identyfikującym.
+
 ### POST /comments
 
 Tworzenie nowego zdarzenia w systemie. Parametry żądania:
@@ -1328,7 +1236,9 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
   }
 }
 ```
+### DELETE /comments/{code}
 
+Usunięcie komentarza wskazanego kodem identyfikującym.
 ### GET /alerts
 
 Pobranie alertów powiązanych z danym użytkownikiem.
@@ -1374,6 +1284,10 @@ Pobranie szczegółów alertu wskazanego kodem.
   }
 }
 ```
+
+### DELETE /alerts/{code}
+
+Usunięcie alertu wskazanego kodem identyfikującym.
 
 ### POST /tasks
 
@@ -1468,3 +1382,6 @@ Pobranie szczegółów zadania wskazanego kodem.
 }
 ```
 
+### DELETE /tasks/{code}
+
+Usunięcie zadania wskazanego kodem identyfikującym.
