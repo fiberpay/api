@@ -21,24 +21,27 @@ Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terrory
   - 2.6. [POST /parties/{code}/beneficiaries](#post-partiescodebeneficiaries)
   - 2.7. [GET /parties/{code}/beneficiaries](#get-partiescodebeneficiaries)
   - 2.8. [DELETE /beneficiaries/{code}](#delete-beneficiariescode)
-  - 2.9 [POST /transactions](#post-transactions)
-  - 2.10. [GET /transactions](#get-transactions)
-  - 2.11. [GET /transactions/{code}](#get-transactionscode)
-  - 2.12. [GET /transactions/pdf/{code}](#get-transactionspdfcode)
-  - 2.13. [DELETE /transactions/{code}](#delete-transactionscode)
-  - 2.14. [POST /events](#post-events)
-  - 2.15. [GET /events](#get-events)
-  - 2.16. [GET /events/{code}](#get-eventscode)
-  - 2.17. [DELETE /events/{code}](#delete-eventscode)
-  - 2.18. [POST /comments](#post-comments)
-  - 2.19. [DELETE /comments/{code}](#delete-commentscode)
-  - 2.20. [GET /alerts](#get-alerts)
-  - 2.21. [GET /alerts/{code}](#get-alertscode)
-  - 2.22. [DELETE /alerts/{code}]($delete-alertscode)
-  - 2.23. [POST /tasks](#post-tasks)
-  - 2.24. [GET /tasks](#get-tasks)
-  - 2.25. [GET /tasks/{code}](#get-taskscode)
-  - 2.26. [DELETE /tasks/{code}](#delete-taskscode)
+  - 2.9. [POST /parties/{code}/boardmembers](#post-partiescodeboardmembers)
+  - 2.10. [GET /parties/{code}/boardmembers](#get-partiescodeboardmembers)
+  - 2.11. [DELETE /boardmembers/{code}](#delete-boardmemberscode)
+  - 2.12 [POST /transactions](#post-transactions)
+  - 2.13. [GET /transactions](#get-transactions)
+  - 2.14. [GET /transactions/{code}](#get-transactionscode)
+  - 2.15. [GET /transactions/pdf/{code}](#get-transactionspdfcode)
+  - 2.16. [DELETE /transactions/{code}](#delete-transactionscode)
+  - 2.17. [POST /events](#post-events)
+  - 2.18. [GET /events](#get-events)
+  - 2.19. [GET /events/{code}](#get-eventscode)
+  - 2.20. [DELETE /events/{code}](#delete-eventscode)
+  - 2.21. [POST /comments](#post-comments)
+  - 2.22. [DELETE /comments/{code}](#delete-commentscode)
+  - 2.23. [GET /alerts](#get-alerts)
+  - 2.24. [GET /alerts/{code}](#get-alertscode)
+  - 2.25. [DELETE /alerts/{code}]($delete-alertscode)
+  - 2.26. [POST /tasks](#post-tasks)
+  - 2.27. [GET /tasks](#get-tasks)
+  - 2.28. [GET /tasks/{code}](#get-taskscode)
+  - 2.29. [DELETE /tasks/{code}](#delete-taskscode)
 #
 
 ###
@@ -760,40 +763,39 @@ Dodanie beneficjenta rzeczywistego do podmiotu typu company. Parametry żądania
 | Parametr        | Wymagane | Opis                                                          |
 | --------------- | -------- | ------------------------------------------------------------- |
 | **ownedShares** | TAK      | Procent posiadanych udziałów. Przyjmuje wartości od 1 do 100. |
-| **beneficiary** | TAK      | Obiekt zawierający dane beneficjenta                          |
-
-Struktura obiektu z danymi beneficjenta:
-
-| Parametr                   | Wymagane | Opis                                                                                                                  |
-| -------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
-| **firstName**              | NIE      | Imie podmiotu                                                                                                         |
-| **lastName**               | NIE      | Nazwisko podmiotu                                                                                                     |
-| **personalIdentityNumber** | TAK      | Numer PESEL podmiotu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)                       |
-| **documentType**           | TAK      | Rodzaj dokumentu Aktualnie wspierane: id_card, passport, residency_card (nie jest wymagany jeśli nie ma numeru pesel) |
-| **documentNumber**         | TAK      | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                         |
-| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                                                                                             |
-| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)                                                                              |
-| **birthCity**              | NIE      | Miasto urodzenia                                                                                                      |
-| **birthCountry**           | NIE      | Kraj urodzenia                                                                                                        |
-| **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                                                            |
-
+| **personalIdentityNumber** | TAK      | Numer PESEL beneficjenta (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)                       |
+| **documentType**| TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)|
+| **documentNumber**| TAK    | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                         |
+| **description** | NIE      | Opis benficjenta                                              |
+| **firstName**   | NIE      | Imię benficjenta                                              |
+| **lastName**    | NIE      | Nazwisko beneficjenta                                         |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                          |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)           |
+| **birthCity**              | NIE      | Miasto urodzenia                                   |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)|
+| **birthCountry**           | NIE      | Kraj urodzenia                                     |
+| **politicallyExposed**     | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)                       |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument beneficjenta jest bezterminowy (bool)   |
 #### Przykładowe dane do dodania beneficjenta rzeczywistego:
 
 ```json
 {
-  "ownedShares": 10,
-  "beneficiary": {
-    "firstName": "Jan",
-    "lastName": "Kowalski",
-    "personalIdentityNumber": "01234567890",
-    "documentType": "id_card",
-    "documentNumber": "AZE123456",
-    "documentExpirationDate": "2023-10-15",
-    "citizenship": "PL",
-    "birthCity": "Warszawa",
-    "birthCountry": "PL",
-    "politicallyExposed": false
-  }
+  "birthCity":  "",
+  "birthCountry":  "AF",
+  "birthDate": null,
+  "citizenship": "AQ",
+  "description": "",
+  "documentExpirationDate": null,
+  "documentNumber": "ABC123",
+  "documentType": "Dowód osobisty",
+  "firstName": "Jan",
+  "lastName":  "Kowalski",
+  "ownedShares": "2",
+  "personalIdentityNumber": "65122666817",
+  "politicallyExposed":  false,
+  "type":  "individual",
+  "withoutExpirationDate":  false,
+
 }
 ```
 
@@ -907,6 +909,158 @@ W przypadku gdy podmiot nie posiada dodanych beneficjentów rzeczywistych zwraca
 
 Usunięcie beneficjenta rzeczywistego wskazanego kodem identyfikującym.
 
+
+### POST /parties/{code}/boardmembers
+
+Dodanie członka zarządu do podmiotu typu osoba prawna (company). Parametry żądania:
+
+| Parametr        | Wymagane | Opis                                                          |
+| --------------- | -------- | ------------------------------------------------------------- |
+| **personalIdentityNumber** | TAK      | Numer PESEL członka zarządu (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)                       |
+| **documentType**| TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)|
+| **documentNumber**| TAK    | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                         |
+| **description** | NIE      | Opis benficjenta                                              |
+| **firstName**   | NIE      | Imię benficjenta                                              |
+| **lastName**    | NIE      | Nazwisko członka zarządu                                         |
+| **documentExpirationDate** | NIE      | Termin ważnosci dokumentu                          |
+| **citizenship**            | NIE      | Obywatelstwo (kod kraju standardzie ISO)           |
+| **birthCity**              | NIE      | Miasto urodzenia                                   |
+| **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)|
+| **birthCountry**           | NIE      | Kraj urodzenia                                     |
+| **politicallyExposed**     | NIE      | Informacja czy członek zarządu jest eksponowany politycznie (bool)                       |
+| **withoutExpirationDate**  | NIE      | Informacja czy dokument członka zarządu jest bezterminowy (bool)   |
+
+#### Przykładowe dane do dodania beneficjenta rzeczywistego:
+
+```json
+{
+  "birthCity":  "",
+  "birthCountry":  "AF",
+  "birthDate": null,
+  "citizenship": "AQ",
+  "description": "",
+  "documentExpirationDate": null,
+  "documentNumber": "ABC123",
+  "documentType": "Dowód osobisty",
+  "firstName": "Jan",
+  "lastName":  "Kowalski",
+  "ownedShares": "2",
+  "personalIdentityNumber": "65122666817",
+  "politicallyExposed":  false,
+  "type":  "individual",
+  "withoutExpirationDate":  false,
+
+}
+```
+
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 201 CREATED**
+
+```json
+{
+  "data": {
+    "code": "8b6kmdapy1nt",
+    "boardmember": {
+      "individualEntity": {
+        "code": "8pzqmn1g3r4k",
+        "firstName": "Jan",
+        "lastName": "Kowalski",
+        "personalIdentityNumber": "01234567890",
+        "documentType": "id_card",
+        "documentNumber": "aze123456",
+        "documentExpirationDate": "2022-10-15",
+        "citizenship": "PL",
+        "birthCity": "Warszawa",
+        "birthCountry": "PL",
+        "politicallyExposed": false,
+        "createdAt": "2022-06-06T09:15:08.000000Z",
+        "personalIdentifier": null
+      }
+    },
+    "company": {
+      "legalEntity": {
+        "code": "2v8rjpf63a9g",
+        "companyName": "FiberPay",
+        "tradeName": "FiberPay",
+        "taxIdNumber": "3210213293",
+        "nationalBusinessRegistryNumber": "123456789",
+        "nationalCourtRegistryNumber": "1234567890",
+        "businessActivityForm": "limited_liability_company",
+        "industry": "soccer",
+        "servicesDescription": "Usługi programistyczne",
+        "website": "www.fiberpay.pl",
+        "createdAt": "2022-06-01T15:04:38.000000Z",
+        "registrationCountry": null,
+        "companyIdentifier": null
+      },
+      "addresses": [
+        {
+          "code": "xen4vgz63c8w",
+          "type": "business_address",
+          "country": "PL",
+          "city": "Warszawa",
+          "street": "Grzybowska",
+          "houseNumber": "4",
+          "flatNumber": "106",
+          "postalCode": "00-131",
+          "createdAt": "2022-06-01T15:04:38.000000Z"
+        }
+      ],
+      "contacts": [
+        {
+          "code": "5hcu2j7z3wxg",
+          "type": "company",
+          "email": "fiberpay@fiberpay.pl",
+          "phoneCountry": "48",
+          "phoneNumber": "123123123",
+          "createdAt": "2022-06-01T15:04:38.000000Z"
+        }
+      ]
+    }
+  }
+}
+```
+
+### GET /parties/{code}/boardmembers
+
+Pobranie beneficjentów rzeczywistych wskazanego kodem podmiotu typu company.
+
+#### Przykładowa odpowiedź serwera:
+
+- **STATUS 200 OK**
+
+```json
+{
+  "data": [
+    {
+      "code": "t8svea4gnpu7",
+      "description": null,
+      "individualEntity": {
+        "code": "5vghqraxtucn",
+        "firstName": "Jan",
+        "lastName": "Kowalski",
+        "personalIdentityNumber": "84022598949",
+        "documentType": "Paszport",
+        "documentNumber": "aze123123",
+        "documentExpirationDate": null,
+        "withoutExpirationDate": false,
+        "citizenship": null,
+        "birthCity": null,
+        "birthCountry": null,
+        "politicallyExposed": false,
+        "createdAt": "2023-04-24T09:20:06.000000Z",
+        "birthDate": null
+      }
+    }
+  ]
+}
+```
+W przypadku gdy podmiot nie posiada dodanych członków zarządu zwracana tablica jest pusta
+
+### DELETE /boardmembers/{code}
+
+Usunięcie członka zarządu wskazanego kodem identyfikującym.
 
 ## POST /transactions
 
