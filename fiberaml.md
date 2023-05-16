@@ -24,7 +24,7 @@ Wspomaganie działań przeciwdziałania praniu pieniędzy i finansowania terrory
   - 2.9. [POST /parties/{code}/boardmembers](#post-partiescodeboardmembers)
   - 2.10. [GET /parties/{code}/boardmembers](#get-partiescodeboardmembers)
   - 2.11. [DELETE /boardmembers/{code}](#delete-boardmemberscode)
-  - 2.12 [POST /transactions](#post-transactions)
+  - 2.12. [POST /transactions](#post-transactions)
   - 2.13. [GET /transactions](#get-transactions)
   - 2.14. [GET /transactions/{code}](#get-transactionscode)
   - 2.15. [GET /transactions/pdf/{code}](#get-transactionspdfcode)
@@ -339,7 +339,7 @@ a) kontakt:
     "pkdCode": "01.12.Z",
     "pkdName": "Uprawa ryżu"
   },
-  "personalIdentityNumber": "01234567880",
+  "personalIdentityNumber": "99120234518",
   "pkdCodes": [
     {
       "pkdCode": "01.15.Z",
@@ -930,7 +930,7 @@ Dodanie członka zarządu do podmiotu typu osoba prawna (company). Parametry ż�
 | **politicallyExposed**     | NIE      | Informacja czy członek zarządu jest eksponowany politycznie (bool)                       |
 | **withoutExpirationDate**  | NIE      | Informacja czy dokument członka zarządu jest bezterminowy (bool)   |
 
-#### Przykładowe dane do dodania beneficjenta rzeczywistego:
+#### Przykładowe dane do dodania członka zarządu:
 
 ```json
 {
@@ -944,7 +944,6 @@ Dodanie członka zarządu do podmiotu typu osoba prawna (company). Parametry ż�
   "documentType": "Dowód osobisty",
   "firstName": "Jan",
   "lastName":  "Kowalski",
-  "ownedShares": "2",
   "personalIdentityNumber": "65122666817",
   "politicallyExposed":  false,
   "type":  "individual",
@@ -1103,23 +1102,27 @@ Jeśli transakcja nie jest oznaczona jako okazjonalna dodatkowo należy podać p
 
 ```json
 {
-  "type": "broker",
-  "occasionalTransaction": false,
-  "amount": 1250,
+  "type": "buyer",
+  "amount": "1250",
   "currency": "PLN",
   "location": "PL",
-  "bookedAt": "2021-05-10 11:06:29",
+  "bookedAt": "2023-02-14 15:15:00",
   "description": "zapłata za rower",
-  "references": "ABC123123123",
-  "paymentMethod": "bank_transfer",
-  "senderIban": "PL12341234123412341234123412",
-  "receiverIban": "PL34123412341234123412341234",
+  "references": "",
+  "paymentMethod": "Gotówka",
   "senderFirstName": "",
   "senderLastName": "",
-  "senderCode": "htu7evj63xkf",
-  "receiverFirstName": "",
-  "receiverLastName": "",
-  "receiverCode": "8mjken1c725h"
+  "senderCompanyName": "",
+  "senderCode": null,
+  "senderIban": "",
+  "receiverFirstName": "Jan",
+  "receiverLastName": "Kowalski",
+  "receiverCompanyName": "",
+  "receiverCode": null,
+  "receiverIban": "",
+  "occasionalTransaction": false,
+  "createdByName": "Tester",
+  "status": "new"
 }
 ```
 
@@ -1261,6 +1264,7 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 | **description**  | TAK      | Opis zdarzenia                                                |
 | **significance** | TAK      | Ważność zdarzenia. Aktualnie wspierane: info, warning, urgent |
 | **partyCode**    | NIE      | Kod powiązanego podmiotu                                      |
+| **transactionCode**| NIE      | Kod powiązanej transakcji                                   |
 
 #### Przykładowe dane do utworzenia zdarzenia:
 
