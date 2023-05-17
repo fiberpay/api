@@ -502,7 +502,6 @@ a) kontakt:
       "politicallyExposed": false,
       "withoutExpirationDate": false,
       "birthDate": null,
-      "ownedShares": "50",
       "description": "Prezes"
     },
     {
@@ -1077,25 +1076,25 @@ Jeśli transakcja jest oznaczona jako okazjonalna wymagane są następujące par
 | ----------------- | -------- | ---------------------------------------------------------- |
 | **amount**        | TAK      | Kwota transakcji                                           |
 | **currency**      | TAK      | Waluta transakcji                                          |
-| **location**      | NIe      | Kraj w którym została przeprowadzona transakcja            |
-| **bookedAt**      | NIE      | Data zaksięgowania transakcji                              |
+| **bookedAt**      | TAK      | Data zaksięgowania transakcji                              |
+| **paymentMethod** | TAK      | Sposób płatności                                           |
+| **location**      | NIE      | Kraj w którym została przeprowadzona transakcja            |
 | **description**   | NIE      | Opis transakcji (tytuł, przedmiot transakcji itd.)         |
 | **references**    | NIE      | Referencje własne                                          |
-| **paymentMethod** | NIE      | Sposób płatności                                           |
-| **senderIban**    | NIE      | Numer konta nadawcy (gdy sposób płatności bank_transfer)   |
-| **receiverIban**  | NIE      | Numer konta odbiorcy (gdy sposób płatności brank_transfer) |
+| **senderIban**    | NIE      | Numer konta nadawcy (wymagany gdy sposób płatności to bank_transfer)   |
+| **receiverIban**  | NIE      | Numer konta odbiorcy (wymagany gdy sposób płatności to brank_transfer) |
 
 Jeśli transakcja nie jest oznaczona jako okazjonalna dodatkowo należy podać poniższe parametry:
 
 | Parametr                | Wymagane | Opis                                                      |
 | ----------------------- | -------- | --------------------------------------------------------- |
-| **senderFirstName**     | NIE      | Imie nadawcy (jeśli nie jest podany kod nadawcy)          |
-| **senderLastName**      | NIE      | Nazwisko nadawcy (jeśli nie jest podany kod nadawcy)      |
-| **senderCompanyName**   | NIE      | Nazwa firmy nadawcy (jeśli nie jest podany kod nadawcy)   |
+| **senderFirstName**     | NIE      | Imie nadawcy (wymagany jeśli nie jest podany kod nadawcy)          |
+| **senderLastName**      | NIE      | Nazwisko nadawcy (wymagany jeśli nie jest podany kod nadawcy)      |
+| **senderCompanyName**   | NIE      | Nazwa firmy nadawcy (wymagany jeśli nie jest podany kod nadawcy)   |
 | **senderCode**          | TAK      | Kod podmiotu nadawcy                                      |
-| **receiverFirstName**   | NIE      | Imie odbiorcy (jeśli nie jest podany kod odbiorcy)        |
-| **receiverLastName**    | NIE      | Nazwisko odbiorcy (jeśli nie jest podany kod odbiorcy)    |
-| **receiverCompanyName** | NIE      | Nazwa firmy odbiorcy (jeśli nie jest podany kod odbiorcy) |
+| **receiverFirstName**   | NIE      | Imie odbiorcy (wymagany jeśli nie jest podany kod odbiorcy)        |
+| **receiverLastName**    | NIE      | Nazwisko odbiorcy (wymagany jeśli nie jest podany kod odbiorcy)    |
+| **receiverCompanyName** | NIE      | Nazwa firmy odbiorcy (wymagany jeśli nie jest podany kod odbiorcy) |
 | **receiverCode**        | TAK      | Kod podmiotu odbiorcy                                     |
 
 #### Przykładowe dane do utworzenia transakcji:
