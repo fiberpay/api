@@ -185,7 +185,6 @@ Struktura obiektu beneficjenta:
 
 | Parametr                     | Wymagane | Opis                                                                    |
 | ---------------------------- | -------- | ----------------------------------------------------------------------- |
-| **type**                     | TAK      | Typ podmiotu. Aktualnie wspierane: individual                           |
 | **firstName**                | NIE      | Imię beneficjenta                                                       |
 | **lastName**                 | NIE      | Nazwisko beneficjenta                                                   |
 | **personalIdentityNumber**   | TAK      | Numer PESEL beneficjenta (w przypadku braku numeru pesel wymagany jest  |
@@ -208,7 +207,6 @@ Struktura obiektu członka zarządu:
 
 | Parametr                     | Wymagane | Opis                                                                       |
 | ---------------------------- | -------- | -------------------------------------------------------------------------- |
-| **type**                     | TAK      | Typ podmiotu. Aktualnie wspierane: individual                              |
 | **firstName**                | NIE      | Imię członka zarządu                                                       |
 | **lastName**                 | NIE      | Nazwisko członka zarządu                                                   |
 | **personalIdentityNumber**   | TAK      | Numer PESEL członka zarządu (w przypadku braku numeru pesel wymagany jest  |
@@ -453,7 +451,6 @@ a) kontakt:
   ],
   "beneficiaries": [
     {
-      "type": "individual",
       "firstName": "Jan",
       "lastName": "Kowalski",
       "personalIdentityNumber": "01234567890",
@@ -470,7 +467,6 @@ a) kontakt:
       "description": ""
     },
     {
-      "type": "individual",
       "firstName": "Adam",
       "lastName": "Nowak",
       "personalIdentityNumber": "",
@@ -489,7 +485,6 @@ a) kontakt:
   ],
   "boardMembers": [
     {
-      "type": "individual",
       "firstName": "Jan",
       "lastName": "Kowalski",
       "personalIdentityNumber": "01234567890",
@@ -505,7 +500,6 @@ a) kontakt:
       "description": "Prezes"
     },
     {
-      "type": "individual",
       "firstName": "Adam",
       "lastName": "Nowak",
       "personalIdentityNumber": "",
