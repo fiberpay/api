@@ -57,7 +57,7 @@ Głównym zastosowaniem API jest katalogowanie podmiotów, przez działalności 
 | Serwer API | Produkcyjne   | https://api.systemaml.pl/1.0/ |
 | Frontend aplikacji | Produkcyjne   | https://systemaml.pl/ |
 | Serwer API | Testowe   | https://amlapitest.fiberpay.pl/1.0/ |
-| Frontend aplikacji | Testowe   | https://cranky-kowalevski-c227c9.netlify.app/ |
+| Frontend aplikacji | Testowe   | https://test.systemaml.pl/ |
 
 ### UWAGA!
 
