@@ -70,7 +70,7 @@ Do korzystania z API konieczne jest wygenerowanie kluczy:
 - jawnego (apiKey) - używanego do przesyłania w ramach żądań API
 - tajnego (secretKey) - używanego do podpisywania żądań (nigdy nie powinien by przesyłany lub ujawniany)
 
-W celu uzyskania danych dostępowych niezbędnych do poprawnego korzystania z API należy wygenerować klucze na frontendzie aplikacji lub skontaktować się bezpośrednio z usługodawcą.
+W celu uzyskania danych dostępowych niezbędnych do poprawnego korzystania z API należy wygenerować klucze na frontendzie aplikacji lub skontaktować się bezpośrednio z usługodawcą (info@fiberpay.pl).
 
 W przypadku niepoprawnego wykorzystania kluczy dostępowych serwer zwraca następujące błędy:
 
