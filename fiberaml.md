@@ -140,6 +140,8 @@ a) individual:
 | **withoutExpirationDate**  | NIE      | Informacja czy dokument posiada datę ważności (bool)                                            |
 | **references**             | NIE      | Referencje własne                                                                               |
 | **politicallyExposed**     | NIE      | Informacja czy podmiot jest eksponowany politycznie (bool)                                      |
+| **politicallyExposedFamily**     | NIE      | Informacja czy podmiot jest rodziną osoby eksponowanej politycznie (bool)                 |
+| **politicallyExposedCoworker**     | NIE      | Informacja czy podmiot jest bliskim współpracownikiem osoby eksponowanej politycznie (bool)|
 
 b) sole_proprietorship - wszystkie powyższe oraz:
 
@@ -200,6 +202,8 @@ Struktura obiektu beneficjenta:
 | **withoutExpirationDate**    | NIE      | Informacja czy dokument posiada datę ważności (bool)                    |
 | **references**               | NIE      | Referencje własne                                                       |
 | **politicallyExposed**       | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)          |
+| **politicallyExposedFamily**     | NIE      | Informacja czy beneficjent jest rodziną osoby eksponowanej politycznie (bool)                 |
+| **politicallyExposedCoworker**     | NIE      | Informacja czy beneficjent jest bliskim współpracownikiem osoby eksponowanej politycznie (bool)|
 | **ownedShares**              | TAK      | Liczba posiadanych udziałów (%)                                         |
 | **description**              | NIE      | Opis beneficjenta                                                       |
 
@@ -221,7 +225,9 @@ Struktura obiektu członka zarządu:
 | **birthCity**                | NIE      | Miasto urodzenia                                                           |
 | **withoutExpirationDate**    | NIE      | Informacja czy dokument posiada datę ważności (bool)                       |
 | **references**               | NIE      | Referencje własne                                                          |
-| **politicallyExposed**       | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)             |
+| **politicallyExposed**       | NIE      | Informacja czy członek zarządu jest eksponowany politycznie (bool)             |
+| **politicallyExposedFamily**     | NIE      | Informacja czy członek zarządu jest rodziną osoby eksponowanej politycznie (bool)                 |
+| **politicallyExposedCoworker**     | NIE      | Informacja czy członek zarządu jest bliskim współpracownikiem osoby eksponowanej politycznie (bool)|
 | **description**              | NIE      | Opis członka zarządu                                                       |
 
 Do każdego z typów podmiotu można dodać dane kontaktowe.
@@ -768,6 +774,8 @@ Dodanie beneficjenta rzeczywistego do podmiotu typu company. Parametry żądania
 | **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)|
 | **birthCountry**           | NIE      | Kraj urodzenia                                     |
 | **politicallyExposed**     | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)                       |
+| **politicallyExposedFamily**     | NIE      | Informacja czy beneficjent jest rodziną osoby eksponowanej politycznie (bool)                 |
+| **politicallyExposedCoworker**     | NIE      | Informacja czy beneficjent jest bliskim współpracownikiem osoby eksponowanej politycznie (bool)|
 | **withoutExpirationDate**  | NIE      | Informacja czy dokument beneficjenta jest bezterminowy (bool)   |
 #### Przykładowe dane do dodania beneficjenta rzeczywistego:
 
@@ -921,6 +929,8 @@ Dodanie członka zarządu do podmiotu typu osoba prawna (company). Parametry ż�
 | **birthDate**              | NIE      | Data urodzenia (wymagana jeśli nie ma numeru pesel)|
 | **birthCountry**           | NIE      | Kraj urodzenia                                     |
 | **politicallyExposed**     | NIE      | Informacja czy członek zarządu jest eksponowany politycznie (bool)                       |
+| **politicallyExposedFamily**     | NIE      | Informacja czy członek zarządu jest rodziną osoby eksponowanej politycznie (bool)                 |
+| **politicallyExposedCoworker**     | NIE      | Informacja czy członek zarządu jest bliskim współpracownikiem osoby eksponowanej politycznie (bool)|
 | **withoutExpirationDate**  | NIE      | Informacja czy dokument członka zarządu jest bezterminowy (bool)   |
 
 #### Przykładowe dane do dodania członka zarządu:
