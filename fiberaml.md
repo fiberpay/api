@@ -204,7 +204,8 @@ Struktura obiektu beneficjenta:
 | **politicallyExposed**       | NIE      | Informacja czy beneficjent jest eksponowany politycznie (bool)          |
 | **politicallyExposedFamily**     | NIE      | Informacja czy beneficjent jest rodziną osoby eksponowanej politycznie (bool)                 |
 | **politicallyExposedCoworker**     | NIE      | Informacja czy beneficjent jest bliskim współpracownikiem osoby eksponowanej politycznie (bool)|
-| **ownedShares**              | TAK      | Liczba posiadanych udziałów (%)                                         |
+| **ownedSharesAmount**              | TAK      | Liczba posiadanych udziałów                                          |
+| **ownedSharesUnit**              | TAK      | Jednostka posiadanych udziałów ('%' lub 'PLN')                                 |
 | **description**              | NIE      | Opis beneficjenta                                                       |
 
 Struktura obiektu członka zarządu:
@@ -761,7 +762,8 @@ Dodanie beneficjenta rzeczywistego do podmiotu typu company. Parametry żądania
 
 | Parametr        | Wymagane | Opis                                                          |
 | --------------- | -------- | ------------------------------------------------------------- |
-| **ownedShares** | TAK      | Procent posiadanych udziałów. Przyjmuje wartości od 1 do 100. |
+| **ownedSharesAmount**              | TAK      | Liczba posiadanych udziałów                                          |
+| **ownedSharesUnit**              | TAK      | Jednostka posiadanych udziałów ('%' lub 'PLN')                                 |
 | **personalIdentityNumber** | TAK      | Numer PESEL beneficjenta (w przypadku braku numeru pesel wymagany jest parametr personalIdentifier)                       |
 | **documentType**| TAK      | Rodzaj dokumentu (nie jest wymagany jeśli nie ma numeru pesel)|
 | **documentNumber**| TAK    | Numer dokumentu (nie jest wymagany jeśli nie ma numeru pesel)                                                         |
