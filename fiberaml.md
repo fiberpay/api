@@ -118,7 +118,7 @@ Utworzenie nowego podmiotu. Parametry żądania:
 | Parametr | Wymagane | Opis                                                                        |
 | -------- | -------- | --------------------------------------------------------------------------- |
 | **type** | TAK      | Typ podmiotu. Aktualnie wspierane: individual, sole_proprietorship, company |
-| **status** | TAK    | Status podmiotu. Aktualnie wspierane: appended, draft |
+| **status** | TAK    | Status podmiotu. Aktualnie wspierane: draft, active, inactive, in_acceptance |
 
 W zależności od wybranego typu wymagane są następujące parametry:
 
@@ -266,35 +266,20 @@ a) kontakt:
 
 ```json
 {
-  "beneficiaries": [],
   "birthCity": "Warszawa",
   "birthCountry": "PL",
-  "birthDate": "",
-  "boardMembers": [],
-  "businessActivityForm": "",
   "citizenship": "PL",
-  "companyIdentifier": "",
-  "companyName": "",
   "createdByName": "Wojtek",
   "documentExpirationDate": "2025-05-15",
   "documentNumber": "aze123123",
   "documentType": "id_card",
   "firstName": "Jan",
-  "industry": "",
   "lastName": "Kowalski",
-  "nationalBusinessRegistryNumber": "",
-  "nationalCourtRegistryNumber": "",
   "personalIdentityNumber": "09271573233",
-  "pkdCodes": [],
   "politicallyExposed": false,
   "references": "qwerty",
-  "registrationCountry": "",
-  "servicesDescription": "",
-  "status": "appended",
-  "taxIdNumber": "",
-  "tradeName": "",
+  "status": "active",
   "type": "individual",
-  "website": "",
   "withoutExpirationDate": false,
   "accommodationAddress": {
     "country": "PL",
@@ -324,15 +309,10 @@ a) kontakt:
 
 ```json
 {
-  "beneficiaries": [],
   "birthCity": "Warszawa",
   "nationalBusinessRegistryNumber": "123456789",
   "birthCountry": "PL",
-  "birthDate": "",
-  "boardMembers": [],
-  "businessActivityForm": "",
   "citizenship": "PL",
-  "companyIdentifier": "",
   "companyName": "Usługi programistyczne",
   "createdByName": "Adam",
   "documentExpirationDate": "2025-05-08",
@@ -353,13 +333,9 @@ a) kontakt:
   ],
   "politicallyExposed": false,
   "references": "qwerty",
-  "registrationCountry": "",
-  "servicesDescription": "",
-  "status": "appended",
+  "status": "active",
   "taxIdNumber": "3765151981",
-  "tradeName": "",
   "type": "sole_proprietorship",
-  "website": "",
   "withoutExpirationDate": false,
   "forwardAddress": {
     "country": "PL",
@@ -403,32 +379,15 @@ a) kontakt:
 ```json
 {
   "type": "company",
-  "firstName": "",
-  "lastName": "",
-  "personalIdentityNumber": "",
-  "documentType": "",
-  "documentNumber": "",
-  "documentExpirationDate": null,
-  "citizenship": "",
-  "birthCity": "",
-  "birthCountry": "",
-  "politicallyExposed": false,
-  "withoutExpirationDate": false,
-  "birthDate": "",
   "companyName": "FiberPay",
   "taxIdNumber": "7010634566",
   "nationalBusinessRegistryNumber": "147302566",
   "tradeName": "FiberPay",
   "nationalCourtRegistryNumber": "0000512707",
   "businessActivityForm": "stock_company",
-  "servicesDescription": "",
   "website": "fiberpay.pl",
-  "registrationCountry": "",
-  "companyIdentifier": "",
   "references": "qwerty",
-  "createdByName": "",
-  "industry": "",
-  "status": "appended",
+  "status": "active",
   "businessAddress": {
     "country": "PL",
     "city": "Warszawa",
@@ -460,59 +419,53 @@ a) kontakt:
     {
       "firstName": "Jan",
       "lastName": "Kowalski",
-      "personalIdentityNumber": "01234567890",
+      "personalIdentityNumber": "64091098920",
       "documentType": "id_card",
       "documentNumber": "aze123123",
-      "documentExpirationDate": null,
       "citizenship": "PL",
       "birthCity": "Warszawa",
       "birthCountry": "PL",
       "politicallyExposed": false,
       "withoutExpirationDate": false,
-      "birthDate": null,
-      "ownedShares": "50",
+      "ownedSharesAmount": "45",
+      "ownedSharesUnit": "%",
       "description": ""
     },
     {
       "firstName": "Adam",
       "lastName": "Nowak",
-      "personalIdentityNumber": "",
       "documentType": "id_card",
       "documentNumber": "aze123123",
-      "documentExpirationDate": null,
       "citizenship": "PL",
       "birthCity": "Warszawa",
       "birthCountry": "PL",
       "politicallyExposed": false,
       "withoutExpirationDate": false,
       "birthDate": "2001-01-01",
-      "description": "",
-      "ownedShares": "50"
+      "ownedSharesAmount": "50",
+      "ownedSharesUnit": "%",
+      "description": ""
     }
   ],
   "boardMembers": [
     {
       "firstName": "Jan",
       "lastName": "Kowalski",
-      "personalIdentityNumber": "01234567890",
+      "personalIdentityNumber": "31111161119",
       "documentType": "id_card",
       "documentNumber": "aze123123",
-      "documentExpirationDate": null,
       "citizenship": "PL",
       "birthCity": "Warszawa",
       "birthCountry": "PL",
       "politicallyExposed": false,
       "withoutExpirationDate": false,
-      "birthDate": null,
       "description": "Prezes"
     },
     {
       "firstName": "Adam",
       "lastName": "Nowak",
-      "personalIdentityNumber": "",
       "documentType": "id_card",
       "documentNumber": "aze123123",
-      "documentExpirationDate": null,
       "citizenship": "PL",
       "birthCity": "Warszawa",
       "birthCountry": "PL",
@@ -526,89 +479,80 @@ a) kontakt:
 ```
 
 #### Przykładowa odpowiedź serwera:
-
 - **STATUS 201 CREATED**
 
 ```json
 {
-  "data": {
-    "code": "xswyvgqa37zp",
-    "type": "sole_proprietorship",
-    "entity": {
-      "code": "gq91wkstnae5",
-      "firstName": "Jan",
-      "lastName": "Kowalski",
-      "personalIdentityNumber": "01234567880",
-      "documentType": "id_card",
-      "documentNumber": "AAA123456",
-      "documentExpirationDate": "2022-10-15",
-      "citizenship": "PL",
-      "birthCity": "Dębica",
-      "birthCountry": "PL",
-      "politicallyExposed": false,
-      "createdAt": "2022-06-01T14:52:12.000000Z",
-      "soleProprietorship": {
-        "code": "8p39ze4rsthc",
-        "companyName": "Usługi programistyczne",
-        "taxIdNumber": "7010634566",
-        "nationalBusinessRegistryNumber": "365899489",
-        "createdAt": "2022-06-01T14:52:12.000000Z"
-      }
-    },
-    "addresses": [
-      {
-        "code": "qvj18ftkacrs",
-        "type": "forwarding_address",
-        "country": "PL",
-        "city": "Warszawa",
-        "street": "Grzybowska",
-        "houseNumber": "4",
-        "flatNumber": "106",
-        "postalCode": "00-131",
-        "createdAt": "2022-06-01T14:52:12.000000Z"
-      },
-      {
-        "code": "a732sgfwx8e9",
-        "type": "business_address",
-        "country": "PL",
-        "city": "Warszawa",
-        "street": "Grzybowska",
-        "houseNumber": "4",
-        "flatNumber": "106",
-        "postalCode": "00-131",
-        "createdAt": "2022-06-01T14:52:12.000000Z"
-      },
-      {
-        "code": "jt1vwpg7ra69",
-        "type": "accommodation_address",
-        "country": "PL",
-        "city": "Warszawa",
-        "street": "Grzybowska",
-        "houseNumber": "4",
-        "flatNumber": "106",
-        "postalCode": "00-131",
-        "createdAt": "2022-06-01T14:52:12.000000Z"
-      }
-    ],
-    "contacts": [
-      {
-        "code": "3u16mygz58v4",
-        "type": "personal",
-        "email": "fiberpay@fiberpay.pl",
-        "phoneCountry": "48",
-        "phoneNumber": "123123123",
-        "createdAt": "2022-06-01T14:52:12.000000Z"
-      },
-      {
-        "code": "4a9fz3nky2tq",
+    "data": {
+        "code": "93sc6hgq4jvk",
         "type": "company",
-        "email": "fiberpay@fiberpay.pl",
-        "phoneCountry": "48",
-        "phoneNumber": "123123123",
-        "createdAt": "2022-06-01T14:52:12.000000Z"
-      }
-    ]
-  }
+        "status": "active",
+        "riskStatus": null,
+        "riskExplanation": "",
+        "riskStatusChangedBy": "",
+        "createdByName": null,
+        "references": "qwerty",
+        "entity": {
+            "code": "z7tbqvf6ed4g",
+            "companyName": "FiberPay",
+            "tradeName": "FiberPay",
+            "taxIdNumber": "7010634566",
+            "nationalBusinessRegistryNumber": "147302566",
+            "nationalCourtRegistryNumber": "0000512707",
+            "businessActivityForm": "stock_company",
+            "industry": null,
+            "servicesDescription": null,
+            "website": "fiberpay.pl",
+            "createdAt": "2023-06-12T15:12:02.000000Z",
+            "registrationCountry": null,
+            "companyIdentifier": null,
+            "pkdCodes": [
+                {
+                    "code": "ym78kp3asq9f",
+                    "pkdCode": "58.29.Z",
+                    "pkdName": "DZIAŁALNOŚĆ WYDAWNICZA W ZAKRESIE POZOSTAŁEGO OPROGRAMOWANIA",
+                    "mainPkd": false
+                },
+                {
+                    "code": "1tqhkfn2erd5",
+                    "pkdCode": "62.01.Z",
+                    "pkdName": "DZIAŁALNOŚĆ ZWIĄZANA Z OPROGRAMOWANIEM",
+                    "mainPkd": false
+                }
+            ],
+            "mainPkd": {
+                "code": "pwn9e5hfm1jc",
+                "pkdCode": "64.99.Z",
+                "pkdName": "POZOSTAŁA FINANSOWA DZIAŁALNOŚĆ USŁUGOWA, GDZIE INDZIEJ NIESKLASYFIKOWANA, Z WYŁĄCZENIEM UBEZPIECZEŃ I FUNDUSZÓW EMERYTALNYCH",
+                "mainPkd": true
+            }
+        },
+        "addresses": [
+            {
+                "code": "jznt4rpyqskc",
+                "type": "business_address",
+                "country": "PL",
+                "city": "Warszawa",
+                "street": "Grzybowska",
+                "houseNumber": "4",
+                "flatNumber": "106",
+                "postalCode": "00-131",
+                "createdAt": "2023-06-12T15:12:02.000000Z"
+            }
+        ],
+        "contacts": [
+            {
+                "code": "ycx4qjhn9pg5",
+                "type": "company",
+                "emailAdress": "info@fiberpay.pl",
+                "phoneCountry": "48",
+                "phoneNumber": "123123123",
+                "createdAt": "2023-06-12T15:12:02.000000Z"
+            }
+        ],
+        "creationIp": null,
+        "creationUserAgent": null
+    }
 }
 ```
 
@@ -783,22 +727,16 @@ Dodanie beneficjenta rzeczywistego do podmiotu typu company. Parametry żądania
 
 ```json
 {
-  "birthCity":  "",
+  "description": "Pierwszy beneficjent",
   "birthCountry":  "AF",
-  "birthDate": null,
   "citizenship": "AQ",
-  "description": "",
-  "documentExpirationDate": null,
   "documentNumber": "ABC123",
   "documentType": "Dowód osobisty",
   "firstName": "Jan",
   "lastName":  "Kowalski",
-  "ownedShares": "2",
+  "ownedSharesAmount": "2",
+  "ownedSharesUnit": "%",
   "personalIdentityNumber": "65122666817",
-  "politicallyExposed":  false,
-  "type":  "individual",
-  "withoutExpirationDate":  false,
-
 }
 ```
 
@@ -939,21 +877,13 @@ Dodanie członka zarządu do podmiotu typu osoba prawna (company). Parametry ż�
 
 ```json
 {
-  "birthCity":  "",
   "birthCountry":  "AF",
-  "birthDate": null,
   "citizenship": "AQ",
-  "description": "",
-  "documentExpirationDate": null,
   "documentNumber": "ABC123",
   "documentType": "Dowód osobisty",
   "firstName": "Jan",
   "lastName":  "Kowalski",
   "personalIdentityNumber": "65122666817",
-  "politicallyExposed":  false,
-  "type":  "individual",
-  "withoutExpirationDate":  false,
-
 }
 ```
 
@@ -1113,21 +1043,12 @@ Jeśli transakcja nie jest oznaczona jako okazjonalna dodatkowo należy podać p
   "location": "PL",
   "bookedAt": "2023-02-14 15:15:00",
   "description": "zapłata za rower",
-  "references": "",
   "paymentMethod": "Gotówka",
-  "senderFirstName": "",
-  "senderLastName": "",
-  "senderCompanyName": "",
-  "senderCode": null,
-  "senderIban": "",
   "receiverFirstName": "Jan",
   "receiverLastName": "Kowalski",
-  "receiverCompanyName": "",
-  "receiverCode": null,
-  "receiverIban": "",
   "occasionalTransaction": false,
   "createdByName": "Tester",
-  "status": "new"
+  "status": "accepted"
 }
 ```
 
@@ -1140,7 +1061,7 @@ Jeśli transakcja nie jest oznaczona jako okazjonalna dodatkowo należy podać p
   "data": {
     "code": "wz2xfsumnjrv",
     "type": "broker",
-    "status": "new",
+    "status": "accepted",
     "amount": "1250.00",
     "currency": "PLN",
     "location": "PL",
@@ -1382,7 +1303,7 @@ Tworzenie nowego zdarzenia w systemie. Parametry żądania:
 ```json
 {
   "content": "testowy komentarz",
-  "eventCode": "2f4pxnwqvtzg"
+  "eventCode": "6jxh93gpasv2"
 }
 ```
 
@@ -1468,11 +1389,8 @@ Tworzenie nowego zadania w systemie. Parametry żądania:
 
 ```json
 {
-  "alertCode": "",
   "content": "Utworzyć przykładowe zadanie do celów reprezentacyjnych w dokumentacji",
   "expirationDate": "2023-04-24",
-  "partyCode": "",
-  "transactionCode": ""
 }
 ```
 
@@ -1486,10 +1404,6 @@ Tworzenie nowego zadania w systemie. Parametry żądania:
     "code": "nga1jz6c8v45",
     "content": "Utworzyć przykładowe zadanie do celów reprezentacyjnych w dokumentacji",
     "status": "new",
-    "alertCode": null,
-    "partyCode": null,
-    "transactionCode": null,
-    "expirationDate": null,
     "createdAt": "2023-04-21T11:08:42.000000Z"
   }
 }
