@@ -1467,11 +1467,100 @@ Usunięcie zadania wskazanego kodem identyfikującym.
 
 ### POST /sanctions-lists/search
 
-Wyszukiwanie na listach sankcyjnych. Poniżej opisano tryb z danymi rejestrowymi: sprawdzenie podmiotu oraz powiązanych osób i organizacji pobranych z CRBR, KRS, REGON i CEIDG, zależnie od dostępności i typu podmiotu.
+Wyszukiwanie na listach sankcyjnych obsługuje dwa tryby wybierane opcjonalnym parametrem boolean `includeRegistryData`:
 
-Ustawienie `includeRegistryData: true` uruchamia tryb asynchroniczny. Bez tego parametru lub z wartością `false` endpoint zachowuje dotychczasowy synchroniczny tryb wyszukiwania i odpowiedź HTTP 200. Parametry i wynik tego trybu nie są przedmiotem poniższego opisu.
+| `includeRegistryData` | Tryb | Odpowiedź |
+| --- | --- | --- |
+| Pominięty lub `false` | Dotychczasowe wyszukiwanie synchroniczne według przekazanego kryterium. | HTTP 200 z `isMatch`, `code`, `matchedEntities` i, dla identyfikatorów firmy, `relatedIdentifiers`. |
+| `true` | Nowe sprawdzenie podmiotu i powiązanych uczestników z rejestrów. | HTTP 202 z `reportCode` i `status`; wynik odbierany osobnym GET. |
 
-Ścieżki są względne do adresu API zakończonego `/1.0/`. Funkcjonalność wymaga wersji serwera zawierającej DEV-5757; opis nie potwierdza jej wdrożenia na danym środowisku.
+Ścieżki są względne do adresu API zakończonego `/1.0/`. Nowy tryb z `includeRegistryData: true` oraz endpoint odczytu wyniku wymagają wersji serwera zawierającej DEV-5757; opis nie potwierdza ich wdrożenia na danym środowisku. Dotychczasowe wywołania bez parametru zachowują synchroniczny format odpowiedzi.
+
+W obu trybach wymagany jest nagłówek `Api-Key`, a body stanowi JWT podpisany algorytmem HS256 przy użyciu `secretKey`, zgodnie z sekcją [Ciało zapytania](#ciało-zapytania). Poniższe przykłady JSON przedstawiają payload **przed podpisaniem**, nie surowe body HTTP. Sekretu nie przesyła się do serwera. Wymagana jest aktywna subskrypcja i dostępny limit wyszukiwań sankcyjnych.
+
+#### Dotychczasowy tryb synchroniczny
+
+Pomiń `includeRegistryData` lub ustaw `false`. Wymagane pole `entityType` wybiera jedno kryterium z poniższej tabeli; dodatkowe pola nie tworzą zestawu niezależnych sprawdzeń.
+
+| `entityType` | Wymagane pola | Znaczenie |
+| --- | --- | --- |
+| `any` | `name` | Wyszukiwanie według nazwy. |
+| `individual` | `firstName`, `lastName` | Wyszukiwanie osoby; opcjonalne `middleName`. |
+| `company` | `companyName` | Wyszukiwanie organizacji według nazwy. |
+| `email` | `email` | Wyszukiwanie adresu e-mail. |
+| `crypto_address` | `cryptoAddress` | Wyszukiwanie adresu kryptowalutowego. |
+| `pesel` | `pesel` | Wyszukiwanie numeru PESEL. |
+| `nip` | `nip` | Wyszukiwanie identyfikatorów firmy na podstawie NIP. |
+| `regon` | `regon` | Wyszukiwanie identyfikatorów firmy na podstawie REGON. |
+| `krs` | `krs` | Wyszukiwanie identyfikatorów firmy na podstawie KRS. |
+
+Pola kryteriów są tekstem o maksymalnej długości 255 znaków. PESEL przyjmuje wyłącznie cyfry. NIP dopuszcza prefiks `PL` oraz białe znaki i myślniki; REGON i KRS dopuszczają białe znaki i myślniki. Separatory są usuwane przed wyszukiwaniem. Walidacja tego trybu nie narzuca długości identyfikatorów wymaganej przez nowy tryb rejestrowy.
+
+Dla `nip`, `regon` i `krs` system próbuje pobrać z REGON pozostałe identyfikatory **tej samej firmy** i uwzględnia je w wyszukiwaniu. Nie jest to sprawdzanie beneficjentów, reprezentantów ani innych uczestników. Uzupełnienie z REGON wymaga prawidłowej długości identyfikatora (NIP/KRS: 10 cyfr, REGON: 9 lub 14). Przy braku danych lub niedostępności rejestru wyszukiwanie może korzystać tylko z dostępnych identyfikatorów; odpowiedź synchroniczna nie zawiera flagi kompletności tego uzupełnienia.
+
+Przykład wyszukiwania osoby bez nowego parametru:
+
+```json
+{
+  "entityType": "individual",
+  "firstName": "Jan",
+  "lastName": "Przykładowy"
+}
+```
+
+#### Odpowiedź synchroniczna: STATUS 200 OK
+
+Wynik jest zwracany bezpośrednio, bez opakowania `data`:
+
+| Pole | Typ | Opis |
+| --- | --- | --- |
+| **isMatch** | boolean | Czy znaleziono przynajmniej jedno dopasowanie. |
+| **code** | string | Kod wyszukiwania. Nie jest `reportCode` nowego trybu i nie służy do odpytywania `search-registries`. |
+| **matchedEntities** | array | Maksymalnie 10 dopasowanych rekordów; `[]` przy braku trafień. |
+| **relatedIdentifiers** | object | Tylko dla `nip`, `regon`, `krs`: dodatkowo ustalone identyfikatory firmy, np. `nip`, `regon`, `krs`, jako tekst. Nie powtarza identyfikatora wejściowego; `{}`, gdy nie ustalono dodatkowych. |
+
+Każdy element `matchedEntities` zawiera `listName` (identyfikator listy, np. `sanctions_mswia`), `name` (nazwę rekordu), `aliases` (aliasy), `recordType` (typ rekordu, np. `individual`) oraz `sourceData` (dane źródłowe zależne od listy). Nie należy zakładać jednakowej struktury `sourceData` dla wszystkich list. Są to pola dotychczasowego wyniku, a nie struktura `checks` z nowego trybu.
+
+Przykładowa odpowiedź bez trafień dla wyszukiwania osoby:
+
+```json
+{
+  "isMatch": false,
+  "code": "ABCD1234EFGH",
+  "matchedEntities": []
+}
+```
+
+Przykładowe żądanie identyfikatora z jawnym wyborem dotychczasowego trybu:
+
+```json
+{
+  "entityType": "nip",
+  "nip": "5252815483",
+  "includeRegistryData": false
+}
+```
+
+Przykładowa odpowiedź bez trafień i bez dodatkowo ustalonych identyfikatorów:
+
+```json
+{
+  "isMatch": false,
+  "code": "ABCD1234EFGH",
+  "matchedEntities": [],
+  "relatedIdentifiers": {}
+}
+```
+
+Udane wyszukiwanie zużywa jedną jednostkę niezależnie od liczby dopasowań. Nie wymaga odpytywania stanu. Zwrócony `code` identyfikuje także wynik dla dotychczasowego pobierania PDF przez `GET /sanctions/{code}/pdf`.
+
+#### Błędy walidacji POST (oba tryby)
+
+Brak wymaganego pola, nieobsługiwane `entityType` lub niewłaściwy format danych daje HTTP 400. Odpowiedź zawiera `status: "ERROR"`, `type: "VALIDATION"`, `message` oraz obiekt `errors`, którego kluczami są nazwy pól, a wartościami komunikaty tekstowe. `includeRegistryData` powinno być wartością JSON `true` lub `false`, nie tekstem `"true"` lub `"false"`.
+
+#### Nowy tryb z danymi rejestrowymi
+
+Ustaw `includeRegistryData: true`, aby sprawdzić podmiot oraz powiązane osoby i organizacje pobrane z CRBR, KRS, REGON i CEIDG, zależnie od dostępności i typu podmiotu. Zmienia to kontrakt odpowiedzi z natychmiastowego HTTP 200 na zlecenie HTTP 202 i późniejszy odczyt wyniku przez GET.
 
 #### Parametry trybu z danymi rejestrowymi
 
