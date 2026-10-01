@@ -1572,7 +1572,7 @@ Ustaw `includeRegistryData: true`, aby sprawdzić podmiot oraz powiązane osoby 
 | **regon** | Dla `entityType: regon` | string | REGON: 9 lub 14 cyfr po normalizacji. |
 | **krs** | Dla `entityType: krs` | string | KRS: 10 cyfr po normalizacji; zachowaj zera początkowe. |
 
-Identyfikatory przekazuj jako tekst. Białe znaki i myślniki są usuwane, a NIP może zawierać prefiks `PL`. Pozostałe typy wyszukiwania nie są obsługiwane w trybie rejestrowym. Nagłówek `Accept-Language: pl` lub `en` określa język raportu i etykiet wyników.
+Identyfikatory przekazuj jako tekst. Białe znaki i myślniki są usuwane, a NIP może zawierać prefiks `PL`. Pozostałe typy wyszukiwania nie są obsługiwane w trybie rejestrowym. Nagłówek `Accept-Language: pl` lub `en` określa język raportu PDF i komunikatów błędu. Kody w JSON wyniku, w tym `listName` i `recordType`, pozostają niezależne od języka.
 
 Wymagany jest nagłówek `Api-Key`. Poniższy JSON przedstawia **payload przed podpisaniem**, a nie surowe body HTTP. Body żądania stanowi JWT podpisany algorytmem HS256 przy użyciu `secretKey`, zgodnie z sekcją [Ciało zapytania](#ciało-zapytania). Sekretu nie przesyła się do serwera.
 
@@ -1635,7 +1635,7 @@ Dla `failed` pole `error` zawiera `code: "processing_failed"` oraz `message` z b
 
 | Pole | Opis |
 | --- | --- |
-| **summary.hasMatch** | Czy wykonane sprawdzenia zawierają dopasowanie. |
+| **summary.isMatch** | Czy wykonane sprawdzenia zawierają dopasowanie. To samo znaczenie co `isMatch` w trybie synchronicznym. |
 | **summary.performedSearches** | Liczba sprawdzeń, nie liczba osób ani jednostek rozliczeniowych. |
 | **summary.incompleteData** | Czy wynik jest niepełny. |
 | **subject** | Dostępne dane identyfikacyjne głównego podmiotu i tablica `checks`. |
@@ -1664,11 +1664,25 @@ Każde `checks` jest tablicą wykonanych sprawdzeń:
 | --- | --- |
 | **type** | Kryterium, np. `name`, `nip`, `regon`, `krs`, `pesel`, `email` lub `company_name`. |
 | **value** | Wartość użyta do sprawdzenia; może być `null`, jeśli nie ma jej w zapisanych danych. |
-| **matches** | Tablica dopasowań z raportu. Pusta tablica oznacza brak trafień dla wykonanego kryterium. |
-| **listData** | Opcjonalne metadane list dla danego sprawdzenia. |
-| **filteredMatches** | Opcjonalne rekordy odfiltrowane według kraju; dane pomocnicze, nie trafienia wpływające na `hasMatch`. |
+| **matches** | Tablica dopasowań. Pusta tablica oznacza brak trafień dla wykonanego kryterium. |
+| **filteredMatches** | Opcjonalnie, tylko przy sprawdzeniu nazwy głównego podmiotu: rekordy odrzucone filtrem kraju. Ten sam kształt co `matches`. Nie wpływają na `isMatch`. |
 
-Sprawdzenia nazwy i identyfikatorów są oddzielnymi elementami. Pusta tablica `checks` **nie potwierdza wykonania sprawdzenia**. Szczegóły dopasowań pochodzą z raportu, a `listName` i `recordType` są etykietami w języku raportu, nie stałymi kodami.
+Sprawdzenia nazwy i identyfikatorów są oddzielnymi elementami. Pusta tablica `checks` **nie potwierdza wykonania sprawdzenia**.
+
+Element `matches` i `filteredMatches` ma te same pola co element `matchedEntities` w trybie synchronicznym: `listName` (kod listy, np. `sanctions_mswia`), `name`, `aliases`, `recordType` (kod rekordu, np. `company` albo `individual`) oraz `sourceData`. Nie są to etykiety z PDF. Nie należy zakładać jednakowej struktury `sourceData` dla wszystkich list.
+
+```json
+{
+  "listName": "sanctions_mswia",
+  "name": "FABERLIC EUROPE Sp. z o.o.",
+  "aliases": ["FABERLIC EUROPE Sp. z o.o."],
+  "recordType": "company",
+  "sourceData": {
+    "nip": "5252815483",
+    "krs": "0000824564"
+  }
+}
+```
 
 Uproszczony przykład zakończonego wyniku bez trafień (dane fikcyjne; dwa wykonane sprawdzenia):
 
@@ -1678,7 +1692,7 @@ Uproszczony przykład zakończonego wyniku bez trafień (dane fikcyjne; dwa wyko
   "status": "completed",
   "result": {
     "summary": {
-      "hasMatch": false,
+      "isMatch": false,
       "performedSearches": 2,
       "incompleteData": false
     },
@@ -1706,7 +1720,7 @@ Uproszczony przykład zakończonego wyniku bez trafień (dane fikcyjne; dwa wyko
 
 #### Wynik częściowy, limity i retencja
 
-Wynik częściowy ma `status: completed` oraz `summary.incompleteData: true`. Dostępne są trafienia z wykonanej części sprawdzenia. `hasMatch: false` przy niepełnych danych nie oznacza pełnego sprawdzenia bez dopasowań. Brak uczestnika z niedostępnego źródła również nie oznacza, że został sprawdzony bez trafień. Awaria całego wyszukiwania daje stan `failed`.
+Wynik częściowy ma `status: completed` oraz `summary.incompleteData: true`. Dostępne są trafienia z wykonanej części sprawdzenia. `isMatch: false` przy niepełnych danych nie oznacza pełnego sprawdzenia bez dopasowań. Brak uczestnika z niedostępnego źródła również nie oznacza, że został sprawdzony bez trafień. Awaria całego wyszukiwania daje stan `failed`.
 
 Raport zwraca maksymalnie 10 trafień na poszczególne sprawdzenie. Dla nazwy głównego podmiotu z filtrem kraju rozpatruje do 30 kandydatów przed ograniczeniem wyniku do 10.
 
