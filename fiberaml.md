@@ -1471,14 +1471,14 @@ Wyszukiwanie na listach sankcyjnych obsługuje dwa tryby wybierane opcjonalnym p
 
 | `includeRegistryData` | Tryb | Odpowiedź |
 | --- | --- | --- |
-| Pominięty lub `false` | Dotychczasowe wyszukiwanie synchroniczne według przekazanego kryterium. | HTTP 200 z `isMatch`, `code`, `matchedEntities` i, dla identyfikatorów firmy, `relatedIdentifiers`. |
-| `true` | Nowe sprawdzenie podmiotu i powiązanych uczestników z rejestrów. | HTTP 202 z `reportCode` i `status`; wynik odbierany osobnym GET. |
+| Pominięty lub `false` | Wyszukiwanie synchroniczne według przekazanego kryterium. | HTTP 200 z `isMatch`, `code`, `matchedEntities` i, dla identyfikatorów firmy, `relatedIdentifiers`. |
+| `true` | Sprawdzenie podmiotu i powiązanych uczestników z rejestrów. | HTTP 202 z `reportCode` i `status`; wynik odbierany osobnym GET. |
 
-Ścieżki są względne do adresu API zakończonego `/1.0/`. Nowy tryb z `includeRegistryData: true` oraz endpoint odczytu wyniku wymagają wersji serwera zawierającej DEV-5757; opis nie potwierdza ich wdrożenia na danym środowisku. Dotychczasowe wywołania bez parametru zachowują synchroniczny format odpowiedzi.
+Ścieżki są względne do adresu API zakończonego `/1.0/`.
 
 W obu trybach wymagany jest nagłówek `Api-Key`, a body stanowi JWT podpisany algorytmem HS256 przy użyciu `secretKey`, zgodnie z sekcją [Ciało zapytania](#ciało-zapytania). Poniższe przykłady JSON przedstawiają payload **przed podpisaniem**, nie surowe body HTTP. Sekretu nie przesyła się do serwera. Wymagana jest aktywna subskrypcja i dostępny limit wyszukiwań sankcyjnych.
 
-#### Dotychczasowy tryb synchroniczny
+#### Tryb synchroniczny
 
 Pomiń `includeRegistryData` lub ustaw `false`. Wymagane pole `entityType` wybiera jedno kryterium z poniższej tabeli; dodatkowe pola nie tworzą zestawu niezależnych sprawdzeń.
 
@@ -1494,11 +1494,11 @@ Pomiń `includeRegistryData` lub ustaw `false`. Wymagane pole `entityType` wybie
 | `regon` | `regon` | Wyszukiwanie identyfikatorów firmy na podstawie REGON. |
 | `krs` | `krs` | Wyszukiwanie identyfikatorów firmy na podstawie KRS. |
 
-Pola kryteriów są tekstem o maksymalnej długości 255 znaków. PESEL przyjmuje wyłącznie cyfry. NIP dopuszcza prefiks `PL` oraz białe znaki i myślniki; REGON i KRS dopuszczają białe znaki i myślniki. Separatory są usuwane przed wyszukiwaniem. Walidacja tego trybu nie narzuca długości identyfikatorów wymaganej przez nowy tryb rejestrowy.
+Pola kryteriów są tekstem o maksymalnej długości 255 znaków. PESEL przyjmuje wyłącznie cyfry. NIP dopuszcza prefiks `PL` oraz białe znaki i myślniki; REGON i KRS dopuszczają białe znaki i myślniki. Separatory są usuwane przed wyszukiwaniem. Długość NIP, REGON i KRS nie jest tu walidowana poza tym limitem.
 
 Dla `nip`, `regon` i `krs` system próbuje pobrać z REGON pozostałe identyfikatory **tej samej firmy** i uwzględnia je w wyszukiwaniu. Nie jest to sprawdzanie beneficjentów, reprezentantów ani innych uczestników. Uzupełnienie z REGON wymaga prawidłowej długości identyfikatora (NIP/KRS: 10 cyfr, REGON: 9 lub 14). Przy braku danych lub niedostępności rejestru wyszukiwanie może korzystać tylko z dostępnych identyfikatorów; odpowiedź synchroniczna nie zawiera flagi kompletności tego uzupełnienia.
 
-Przykład wyszukiwania osoby bez nowego parametru:
+Przykład wyszukiwania osoby:
 
 ```json
 {
@@ -1515,11 +1515,11 @@ Wynik jest zwracany bezpośrednio, bez opakowania `data`:
 | Pole | Typ | Opis |
 | --- | --- | --- |
 | **isMatch** | boolean | Czy znaleziono przynajmniej jedno dopasowanie. |
-| **code** | string | Kod wyszukiwania. Nie jest `reportCode` nowego trybu i nie służy do odpytywania `search-registries`. |
+| **code** | string | Kod wyszukiwania. Służy do pobrania PDF przez `GET /sanctions/{code}/pdf`. |
 | **matchedEntities** | array | Maksymalnie 10 dopasowanych rekordów; `[]` przy braku trafień. |
 | **relatedIdentifiers** | object | Tylko dla `nip`, `regon`, `krs`: dodatkowo ustalone identyfikatory firmy, np. `nip`, `regon`, `krs`, jako tekst. Nie powtarza identyfikatora wejściowego; `{}`, gdy nie ustalono dodatkowych. |
 
-Każdy element `matchedEntities` zawiera `listName` (identyfikator listy, np. `sanctions_mswia`), `name` (nazwę rekordu), `aliases` (aliasy), `recordType` (typ rekordu, np. `individual`) oraz `sourceData` (dane źródłowe zależne od listy). Nie należy zakładać jednakowej struktury `sourceData` dla wszystkich list. Są to pola dotychczasowego wyniku, a nie struktura `checks` z nowego trybu.
+Każdy element `matchedEntities` zawiera `listName` (identyfikator listy, np. `sanctions_mswia`), `name` (nazwę rekordu), `aliases` (aliasy), `recordType` (typ rekordu, np. `individual`) oraz `sourceData` (dane źródłowe zależne od listy). Struktura `sourceData` zależy od listy. W trybie rejestrowym te same pola trafienia występują wewnątrz `checks`.
 
 Przykładowa odpowiedź bez trafień dla wyszukiwania osoby:
 
@@ -1531,7 +1531,7 @@ Przykładowa odpowiedź bez trafień dla wyszukiwania osoby:
 }
 ```
 
-Przykładowe żądanie identyfikatora z jawnym wyborem dotychczasowego trybu:
+Przykładowe żądanie identyfikatora z `includeRegistryData: false`:
 
 ```json
 {
@@ -1552,15 +1552,15 @@ Przykładowa odpowiedź bez trafień i bez dodatkowo ustalonych identyfikatorów
 }
 ```
 
-Udane wyszukiwanie zużywa jedną jednostkę niezależnie od liczby dopasowań. Nie wymaga odpytywania stanu. Zwrócony `code` identyfikuje także wynik dla dotychczasowego pobierania PDF przez `GET /sanctions/{code}/pdf`.
+Udane wyszukiwanie zużywa jedną jednostkę niezależnie od liczby dopasowań. Nie wymaga odpytywania stanu. Zwrócony `code` identyfikuje wynik przy pobieraniu PDF przez `GET /sanctions/{code}/pdf`.
 
 #### Błędy walidacji POST (oba tryby)
 
 Brak wymaganego pola, nieobsługiwane `entityType` lub niewłaściwy format danych daje HTTP 400. Odpowiedź zawiera `status: "ERROR"`, `type: "VALIDATION"`, `message` oraz obiekt `errors`, którego kluczami są nazwy pól, a wartościami komunikaty tekstowe. `includeRegistryData` powinno być wartością JSON `true` lub `false`, nie tekstem `"true"` lub `"false"`.
 
-#### Nowy tryb z danymi rejestrowymi
+#### Tryb z danymi rejestrowymi
 
-Ustaw `includeRegistryData: true`, aby sprawdzić podmiot oraz powiązane osoby i organizacje pobrane z CRBR, KRS, REGON i CEIDG, zależnie od dostępności i typu podmiotu. Zmienia to kontrakt odpowiedzi z natychmiastowego HTTP 200 na zlecenie HTTP 202 i późniejszy odczyt wyniku przez GET.
+Ustaw `includeRegistryData: true`, aby sprawdzić podmiot oraz powiązane osoby i organizacje pobrane z CRBR, KRS, REGON i CEIDG, zależnie od dostępności i typu podmiotu. Odpowiedź to HTTP 202 z kodem zlecenia. Wynik odczytuje się przez GET.
 
 #### Parametry trybu z danymi rejestrowymi
 
@@ -1614,7 +1614,7 @@ Dostęp wymaga aktywnej subskrypcji i jest ograniczony do zespołu właściciela
 | 200 | `completed` | Wynik dostępny; sprawdź również `result.summary.incompleteData`. |
 | 200 | `failed` | Sprawdzenie nie powiodło się; szczegóły w `error`. |
 | 410 | `expired` | Dane wyniku usunięto zgodnie z retencją. |
-| 404 | — | Nieznany kod, zlecenie innego zespołu, niewłaściwy typ raportu lub historyczny raport bez powiązania wyniku. |
+| 404 | — | Nieznany kod, zlecenie innego zespołu, niewłaściwy typ raportu albo raport bez powiązanego wyniku. |
 
 Odpowiedzi dla pięciu wymienionych stanów zawierają `reportCode`, `status`, `result` i `error` bez opakowania `data`. `result` jest obiektem wyłącznie przy `completed`, w pozostałych stanach jest `null`. `error` jest `null` dla `queued`, `processing` i `completed`.
 
@@ -1669,7 +1669,7 @@ Każde `checks` jest tablicą wykonanych sprawdzeń:
 
 Sprawdzenia nazwy i identyfikatorów są oddzielnymi elementami. Pusta tablica `checks` **nie potwierdza wykonania sprawdzenia**.
 
-Element `matches` i `filteredMatches` ma te same pola co element `matchedEntities` w trybie synchronicznym: `listName` (kod listy, np. `sanctions_mswia`), `name`, `aliases`, `recordType` (kod rekordu, np. `company` albo `individual`) oraz `sourceData`. Nie są to etykiety z PDF. Nie należy zakładać jednakowej struktury `sourceData` dla wszystkich list.
+Element `matches` i `filteredMatches` ma te same pola co element `matchedEntities` w trybie synchronicznym: `listName` (kod listy, np. `sanctions_mswia`), `name`, `aliases`, `recordType` (kod rekordu, np. `company` albo `individual`) oraz `sourceData`. Etykiety w języku raportu są w PDF. Struktura `sourceData` zależy od listy.
 
 ```json
 {
@@ -1724,4 +1724,4 @@ Wynik częściowy ma `status: completed` oraz `summary.incompleteData: true`. Do
 
 Raport zwraca maksymalnie 10 trafień na poszczególne sprawdzenie. Dla nazwy głównego podmiotu z filtrem kraju rozpatruje do 30 kandydatów przed ograniczeniem wyniku do 10.
 
-Odczyt zwraca zapisany wynik konkretnego zlecenia, a nie najnowszy raport dla danego NIP. Dane JSON podlegają retencji raportów (domyślnie 90 dni; rzeczywisty okres zależy od konfiguracji usługi). Są dostępne niezależnie od wygaśnięcia lub błędu wygenerowania wynikowego PDF. Po usunięciu wyniku GET zwraca HTTP 410 i `status: expired`. Historyczne raporty bez powiązania ze zleceniem nie są odtwarzane przez ten endpoint.
+Odczyt zwraca zapisany wynik konkretnego zlecenia. Dane JSON podlegają retencji raportów (domyślnie 90 dni; rzeczywisty okres zależy od konfiguracji usługi). Są dostępne niezależnie od wygaśnięcia lub błędu wygenerowania wynikowego PDF. Po usunięciu wyniku GET zwraca HTTP 410 i `status: expired`. Raport bez powiązanego zlecenia nie jest dostępny przez ten endpoint.
