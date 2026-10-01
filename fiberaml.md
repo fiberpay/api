@@ -1603,7 +1603,7 @@ Błędy walidacji, np. brak identyfikatora, niewłaściwy typ lub długość, zw
 
 Pobranie stanu i zapisanego wyniku zlecenia. Wymaga `Api-Key` oraz `Authorization: Bearer <JWT>` podpisanego sekretem klucza API; payload tokenu może być pustym obiektem lub tablicą zgodnie z używaną biblioteką JWT. Nie wysyłaj body GET.
 
-Dostęp wymaga aktywnej subskrypcji i jest ograniczony do zespołu właściciela zlecenia. Odczyty nie zużywają jednostek i nie uruchamiają nowego wyszukiwania. Odpytuj okresowo, np. co kilka sekund, dopóki stan to `queued` lub `processing`.
+Dostęp wymaga aktywnej subskrypcji i jest ograniczony do zespołu właściciela zlecenia. Odczyty nie zużywają jednostek i nie uruchamiają nowego wyszukiwania. Odpytuj okresowo, np. co minutę, dopóki stan to `queued` lub `processing`.
 
 #### Stany i kody odpowiedzi
 
